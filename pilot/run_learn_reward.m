@@ -77,12 +77,14 @@ clear p_counterbalance
 % available reward, based on their rt. Here we set the start parameters
 % for the proportion of reward to be computed from in the do_trial
 % function,
-sess.reward_base_rt = .85;
-sess.reward_max_bonus_rt = .35;
-sess.reward_base = 50;
-sess.reward_bonus = 50;
-sess.reward_base_low = 5;
-sess.reward_bonus_low = 5;
+load('task_parameters_v1');
+sess.reward_base_rt = reward.reward_base_rt;
+sess.reward_max_bonus_rt = reward.reward_max_bonus_rt;
+sess.reward_base = reward.reward_base;
+sess.reward_bonus = reward.reward_bonus;
+sess.reward_base_low = reward.reward_base_low;
+sess.reward_bonus_low = reward.reward_bonus_low;
+
 if ~any(sess.col_map)
     sess.reward_colours = reward_colours;
 else
@@ -220,17 +222,16 @@ end
 KbQueueCreate(-1, keys);
 
 %% Timing
-session_hold_times = {[0.5, 0.4, 0.4], ...
-    [0.5, 0.5, 1.0]};
-time.fixation = 0.5 * expand_time;
-time.baseline = 1 * expand_time;
+session_hold_times = timing.session_hold_times;
+time.fixation = timing.fixation * expand_time;
+time.baseline = timing.baseline * expand_time;
 time.cue = session_hold_times{sess.session}(1) * expand_time; % was 0.2
 time.hold = session_hold_times{sess.session}(2) * expand_time; % was 0.1 - base time to hold the fix pre-tgts
 time.hold_v = session_hold_times{sess.session}(3) * expand_time; % was 1.4 - seed for variable time to add
-time.target = 0.067 * expand_time;
-time.mask = 0.067 * expand_time;
-time.reward = 1.4 * expand_time;
-time.abort = 1.0 * expand_time;
+time.target = timing.target * expand_time;
+time.mask = timing.mask * expand_time;
+time.reward = timing.reward * expand_time;
+time.abort = timing.abort * expand_time;
 sess.time = time;
 
 %% Setup eye tracking

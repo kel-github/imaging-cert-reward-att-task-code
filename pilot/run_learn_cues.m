@@ -78,12 +78,13 @@ clear p_counterbalance
 % function,
 % although we don't actually use these parameters in this learning stage of
 % the task
-sess.reward_base_rt = .85;
-sess.reward_max_bonus_rt = .35;
-sess.reward_base = 50;
-sess.reward_bonus = 50;
-sess.reward_base_low = 5;
-sess.reward_bonus_low = 5;
+load('task_parameters_v1');
+sess.reward_base_rt = reward.reward_base_rt;
+sess.reward_max_bonus_rt = reward.reward_max_bonus_rt;
+sess.reward_base = reward.reward_base;
+sess.reward_bonus = reward.reward_bonus;
+sess.reward_base_low = reward.reward_base_low;
+sess.reward_bonus_low = reward.reward_bonus_low;
 
 % Angle of gabor target
 angle = 45;
@@ -152,13 +153,19 @@ else
 end
 root_dir       = pwd;
 project_dir    = sub_dir;
+ 
+sca
 
 % get filename to read contrast params from initital session
-json_rd_fname = generate_filename('_ses-%d_task-learn-att-v1-gabors', sess, '.json');
-tmp = jsonread(fullfile(sub_dir, json_rd_fname));
-meta_data.target_contrasts = tmp.target_contrasts;
-sess.contrast = meta_data.target_contrasts; % for use during the session
-clear tmp
+if ~any(debug)
+    json_rd_fname = generate_filename('_ses-%d_task-learn-att-v1-gabors', sess, '.json');
+    tmp = jsonread(fullfile(sub_dir, json_rd_fname));
+    meta_data.target_contrasts = tmp.target_contrasts;
+    sess.contrast = meta_data.target_contrasts; % for use during the session
+    clear tmp
+else
+    meta_data.target_contrasts = [.2 .2];
+end
 
 meta_data.cue_probs = '.8/.2, .5/.5, .2/.8';
 meta_data.cue_order = sess.shapes;
@@ -216,17 +223,16 @@ end
 KbQueueCreate(-1, keys);
 
 %% Timing
-session_hold_times = {[0.5, 0.75, .75], ...
-                      [0.5, 0.5, 1.0]};
-time.fixation = 0.5 * expand_time;
-time.baseline = 1 * expand_time;
+session_hold_times = timing.session_hold_times;
+time.fixation = timing.fixation * expand_time;
+time.baseline = timing.baseline * expand_time;
 time.cue = session_hold_times{sess.session}(1) * expand_time; % was 0.2
 time.hold = session_hold_times{sess.session}(2) * expand_time; % was 0.1 - base time to hold the fix pre-tgts
 time.hold_v = session_hold_times{sess.session}(3) * expand_time; % was 1.4 - seed for variable time to add
-time.target = 0.067 * expand_time;
-time.mask = 0.067 * expand_time;
-time.reward = 1.0 * expand_time;
-time.abort = 1.0 * expand_time;
+time.target = timing.target * expand_time;
+time.mask = timing.mask * expand_time;
+time.reward = timing.reward * expand_time;
+time.abort = timing.abort * expand_time;
 sess.time = time;
 
 %% Setup eye tracking
@@ -261,7 +267,7 @@ if ~any(sess.skip_init_train)
     for count_shapes = 1:length(cues)
         % set trial count to the beginning
         
-        introduce_cue(w, white, cues(count_shapes) );
+        introduce_cue(w, white, cues(count_shapes), gabor_rect, block_locs(:, count_shapes)/sum(block_locs(:, count_shapes)), white);
         
         % generate trials for this block (16|4) or (12|12 jfffjfjfffjjfjfjjfff fjffjfffjfjjjjfjjfjj fjjffjjfjjfffjjffjjj fjfffjfjjffjfjjjffjf jfffjjfjffffffjfffjf fjfjfjfdjjffffffjjjjf fjjfjjfjfjfjjj) or (4|16) * 3
         [targets, ccw, hrz] = generate_trial_block_params_for_cue(block_locs(count_shapes, :), iterations);
