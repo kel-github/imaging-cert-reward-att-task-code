@@ -35,7 +35,7 @@ function [valid, response, ts] = ...
 %     EEG
 
     time = sess.time; % timing parameters
-    white = sess.config.white;
+    white = sess.config.stim_light;
     grey = sess.config.grey;
     black = sess.config.black;
     stim_dark = sess.config.stim_dark;
@@ -76,6 +76,9 @@ function [valid, response, ts] = ...
 
     % Draw the fixation for baseline.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    if cue > -1
+    draw_stim(wh, 1, [[white, white, white]',[white, white, white]']);
+    end
     draw_stim(wh, 0, stim_dark);
     [ts.baseline] = Screen('Flip', wh);
 %     do_trigger(trid, labjack, triggers.baseline, ts.baseline);

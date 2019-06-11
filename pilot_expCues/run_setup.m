@@ -61,10 +61,12 @@ white = WhiteIndex(screen_index);
 black = BlackIndex(screen_index);
 grey = white * 0.5;
 stim_dark = white * 0.45;
+stim_light = white * 0.75;
 sess.config.white = white;
 sess.config.black = black;
 sess.config.grey = grey;
 sess.config.stim_dark = stim_dark;
+sess.config.stim_light = stim_light;
 sess.config.reward_colour = [255, 215, 0];
 
 [w, rect] = Screen('OpenWindow', screen_index, grey, [], [], [], 0, 8);
