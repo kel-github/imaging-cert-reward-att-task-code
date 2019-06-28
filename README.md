@@ -12,5 +12,8 @@ Dependencies are listed in the notes in the code.
 Run all *.m files from the same folder. Keep all *.m files in the folder from which the files are stored. See the notes within the *.m files for further details.  
 
 ### how to use this repository:  
-For the pilot code (version 1)/example videos, see  
-	/pilot
+For the pilot code (version 1) example videos, see  
+	/pilot  
+	  
+After this we added explicit and competing value cues. To see that version, go to  
+  /pilot_expCues
