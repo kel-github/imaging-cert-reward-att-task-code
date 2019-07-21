@@ -16,4 +16,7 @@ For the pilot code (version 1) example videos, see
 	/pilot  
 	  
 After this we added explicit and competing value cues. To see that version, go to  
-  /pilot_expCues
+  /pilot_expCues  
+	  
+To see the final version for the behavioural testing session, go to  
+  /sess-behav  
