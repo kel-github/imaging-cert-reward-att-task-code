@@ -70,12 +70,12 @@ run_setup;
 
 %% Generate json metadata for this task and session
 addpath('JSONio/');
- 
-json_log_fname = generate_filename('_ses-%d_task-learn-att-v1-cues', sess, '.json');
+task_str = 'learn-cues'; 
+json_log_fname = generate_filename(['_ses-0%d_task-', task_str], sess, '.json');
 meta_data.sub          = sess.sub_num;
 meta_data.session      = sess.session;
 meta_data.date         = datetime;
-meta_data.task         = 'learn-att-v1_step1-cues-v1';
+meta_data.task         = 'learn-cues';
 meta_data.BIDS         = 'v1.1';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
@@ -83,15 +83,12 @@ if ~any(sess.resp_order)
 else
     meta_data.resp_key      = 'clockwise: j, anticlockwise: f';
 end
-meta_data.shapes      = sess.shapes;
-meta_data.shape       = 'left, centre, right';
 root_dir       = pwd;
 project_dir    = sub_dir;
  
-
 % get filename to read contrast params from initital session
 if ~any(debug)
-    json_rd_fname = generate_filename('_ses-%d_task-learn-att-v1-gabors', sess, '.json');
+    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
     sess.contrast = meta_data.target_contrasts; % for use during the session
@@ -100,11 +97,11 @@ else
     meta_data.target_contrasts = [.2 .2];
 end
 
-generate_meta_data_jsons(meta_data, root_dir, project_dir, json_log_fname);
+generate_meta_data_jsons(meta_data, project_dir, json_log_fname);
 
 %% Generate basis for trial structure and set up log files for writing to
-events_fname = generate_filename('_ses-%d_task-learn-att-v1-cues-v1_events', sess, '.tsv');
-events_fid = fopen(fullfile(root_dir, sub_dir, events_fname), 'w');
+events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.tsv');
+events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\n';
 

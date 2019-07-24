@@ -42,16 +42,17 @@ sess.reward_bonus_low = reward.reward_bonus_low;
 angle = 45;
 
 
-%% Generate json metadata for this task and session
+%% Generate the folder for this session
+session_data_loc = '~/Dropbox/MC-Projects/imaging-value-cert-att/striwp1';
 if sess.sub_num < 10
-    sub_dir = sprintf('sub-0%d_ses-%d_task-learn-att-v1', sess.sub_num, sess.session);
+    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
 else
-    sub_dir = sprintf('sub-%d_ses-%d_task-learn-att-v1', sess.sub_num, sess.session);
+    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
 end
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
-
+addpath('JSONio/');
 
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));

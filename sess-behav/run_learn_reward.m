@@ -24,9 +24,6 @@
 % then a block of mixed trials (N = 100 per cue)
 % participants respond under 4 value conditions - hh, ll, lh, hl
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TO-DO - 
-% CHECK FULL FILE LOG TO MAKE SURE TRIAL ALLOCATIONS WORK IN REAL LIFE 
-
 clear all
 clear mex
 
@@ -68,21 +65,12 @@ rngstate = rng;
 run_setup;
 
 %% Generate json metadata for this task and session
-addpath('JSONio/');
-if sess.sub_num < 10
-    sub_dir = sprintf('sub-0%d_ses-%d_task-learn-att-v1', sess.sub_num, sess.session);
-else
-    sub_dir = sprintf('sub-%d_ses-%d_task-learn-att-v1', sess.sub_num, sess.session);
-end
-if ~(exist(sub_dir))
-    mkdir(sub_dir);
-end
-root_dir = cd;
-json_log_fname = generate_filename('_ses-%d_task-learn-att-v1-reward', sess, '.json');
+task_str = 'learn-reward';
+json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
 meta_data.sub          = sess.sub_num;
 meta_data.session      = sess.session;
 meta_data.date         = datetime;
-meta_data.task         = 'learn-att-v1_step1-rewards-v1';
+meta_data.task         = 'learn-rewards';
 meta_data.BIDS         = 'v1.1';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
@@ -98,7 +86,7 @@ project_dir    = sub_dir;
 
 % get filename to read contrast params from initital session
 if ~any(debug)
-    json_rd_fname = generate_filename('_ses-%d_task-learn-att-v1-gabors', sess, '.json');
+    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
     sess.contrast = meta_data.target_contrasts; % for use during the session
@@ -108,11 +96,11 @@ else
     sess.contrast = meta_data.target_contrasts; % for use during the session
 end
 
-generate_meta_data_jsons(meta_data, root_dir, project_dir, json_log_fname);
+generate_meta_data_jsons(meta_data, project_dir, json_log_fname);
 
 %% Generate basis for trial structure and set up log files for writing to
-events_fname = generate_filename('_ses-%d_task-learn-att-v1-learn-rewards-v1_events', sess, '.tsv');
-events_fid = fopen(fullfile(root_dir, sub_dir, events_fname), 'w');
+events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.tsv');
+events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\n';
 
@@ -215,8 +203,9 @@ end
 % OPEN A FILE TO RECORD THE LOG HERE
 %% Generate basis for trial structure and set up log files for writing to
 fclose(events_fid); % close the previous event file
-events_fname = generate_filename('_ses-%d_task-learn-att-v1-test-v1_events', sess, '.tsv');
-events_fid = fopen(fullfile(root_dir, sub_dir, events_fname), 'w');
+task_str = 'exp-test';
+events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.tsv');
+events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\n';
 
@@ -224,10 +213,17 @@ sess.set_types = [1 1 1 1 1 1];
 trials = generate_blocks_FourRewardCont(2); % for 720 trials
 % save the trial table to a file so that we can get other parameters later
 % (such as block number, hrz)
-tbl_fname       = generate_filename('_ses-%d_task-learn-att-v1-test-v1_trls', sess, '.csv');
-trial_tbl_fname = fullfile(root_dir, sub_dir, tbl_fname);
+tbl_fname       = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.csv');
+trial_tbl_fname = fullfile(sub_dir, tbl_fname);
 writetable(trials, trial_tbl_fname);
+% write json meta data for this stage
+json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
+meta_data.task = task_str;
+meta_data.date  = datetime;
+generate_meta_data_jsons(meta_data, project_dir, json_log_fname);
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % take a preceding break
 take_break(w, white, task);
 
