@@ -1,0 +1,13 @@
+function [] = run_task_instructions(wh, white)
+
+
+    Screen('TextStyle', wh, 1);
+    Screen('TextSize', wh, 80);
+    instructions = ...
+        sprintf(['You can earn points based on the coloured\n'...
+                 'rings, and the arrow is helpful\n\n'...
+                 'Remember, the faster you respond, the more\n' ...
+                 'of the available points you will win!\n\n']);
+    DrawFormattedText(wh, instructions, 'Center', 'Center', white, 115);
+   
+end
