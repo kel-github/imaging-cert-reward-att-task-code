@@ -11,10 +11,6 @@ function [ts] = animate_reward(wh, n, ts, sess, time, response, current_reward, 
     % current_reward = current accrued reward value 
     % event form, event_fid are the identifying details of, and
     % datastructure for, the event file
-
-    % set variables for later drawing
-    Screen('TextStyle', wh, 1);
-    Screen('TextSize', wh, 80);    
     gabor_rect = sess.config.gabor_rect;
     white = sess.config.white;
     stim_dark = sess.config.stim_dark;

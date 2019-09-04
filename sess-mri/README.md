@@ -12,7 +12,13 @@ This repository contains the software written for running the behavioural paradi
 Dependencies are listed in the notes in the code.  
 Run all *.m files from the same folder. Keep all *.m files in the folder from which the files are stored. See the notes within the *.m files for further details.  
 
-The code is written to handle the three TRs mentioned above. Accepts '5%' as the trigger from the scanner.  
+The code is written to handle the three TRs mentioned above. Accepts '5%' as the trigger from the scanner. '2@' and '3#' for responses.
+
+Run durations:
+TR .7 = 10.52 mins
+TR 1.51 = 13.02 
+TR 1.92 = 12.44 
+
 
 For each participant, the code is run _n_ times for _n_ blocks
 

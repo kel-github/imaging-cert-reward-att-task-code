@@ -1,13 +1,10 @@
 % Run test of mixed trials in the MRI scanner
 % Run once for one run
 % K. Garner, 2019
-%
-% Borrows from C. Nolan, 2017, HABIT REWARD EXP
-%
 % NOTES:
 %
-% Dimensions calibrated for [](with viewing distance
-% of 570 mm)
+% Dimensions calibrated for see get_ppd() for viewing distance/resolution
+% info
 
 % Psychtoolbox 3.0.14 - Flavor: beta - Corresponds to SVN Revision 8301
 % Matlab R2017a
@@ -26,7 +23,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 0;
+debug = 1;
 
 % initialise mex files etc
 KbCheck;
@@ -41,9 +38,9 @@ if debug
     sess.session = 2;
     sess.run = 1;
     sess.eye_on  = 0;
-    sess.TR = 1.51;
+    sess.TR = 1.92;
     sess.contrast = [.4, .4];
-    
+    reward_total = 0; % initiate reward total variable   
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = input('Session? ');
@@ -51,6 +48,7 @@ else
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
     sess.TR      = input('TR? ');
     sess.contrast = input('Contrasts? ');
+    reward_total = input('Total Rewards? ');
 end
 
 % set acquisition variable for naming files
@@ -118,7 +116,7 @@ trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\n';
 trials = generate_blocks_FourRewardCont_singleRun(1); % for 128 trials
 % save the trial table to a file so that we can get other parameters later
 % (such as block number, hrz)
-tbl_fname       = sprintf(['sub-', sub_str, '_ses-%d_task-', task_str, '_acq-TR%d_run-0%d_trls'], ...
+tbl_fname       = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls'], ...
                         sess.sub_num, sess.session, sess.acq, sess.run);
 trial_tbl_fname = fullfile(sub_dir, tbl_fname);
 writetable(trials, trial_tbl_fname);
@@ -146,15 +144,23 @@ contrast                = sess.contrast;
 TR.TR = sess.TR;
 
 if TR.TR < 1
-    TR.nVis = 3;
+    TR.nVis = 2;
     TR.nResp = 2;
     TR.nFeed = 2;
-    TR.nFix = 2;
-elseif TR.TR > 1
+    TR.nFix = 1;
+    time.pre_pulse_flip = .08; % how long before the pulse to flip
+elseif TR.TR > 1 && TR.TR ~= 1.9
     TR.nVis = 1;
     TR.nResp = 1;
     TR.nFeed = 1;
     TR.nFix = 1;
+    time.pre_pulse_flip = .1; 
+elseif TR.TR == 1.9
+    TR.nVis = 1;
+    TR.nResp = .65/1.9; % to give .85 seconds
+    TR.nFeed = 1/1.9; % to give 1 second
+    TR.nFix = 1;
+    time.pre_pulse_flip = .05; 
 end
 
 % variables for collection time stamps
@@ -170,34 +176,42 @@ ts.resp_end = ts.fix_off; % response period end
 ts.response = ts.fix_off; % timestamp of response on a given trial
 ts.feed_on = ts.fix_off;
 ts.fix_on = ts.fix_off;
-
+ts.f_fix_on = ts.fix_off;
+ts.pulses = zeros(4, size(ts.fix_off, 2)); % collect the onset time of every pulse
 %% run experiment
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% show instructions
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-run_task_instructions(w, white);
-Screen('Flip', w);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% show fixation for 5 scans before continuing
+% pre-load variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-run_task_instructions(w, white);
+
+Priority(topPriorityLevel);    
+run_pre_trials; % to pre-load all variables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% show instructions for dummy scans
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+run_task_instructions(w, white, task);
 [ts.start_dummy] = Screen('Flip', w);
 
 newt = 0;
+pulse_time = waitPulse;
 for i = 1:5
-    if ~any(debug)
-        t = waitPulse;
-        newt = t - newt;
-        fprintf(event_fid, event_form, newt, 0, 'dummy scan');
-    end
     WaitSecs(TR.TR*.9);
+    newt = pulse_time - newt;
+    fprintf(event_fid, event_form, newt, 0, 'dummy scan');
+    if ~any(debug)
+        pulse_time = waitPulse;
+    else
+        pulse_time = GetSecs;
+    end
 end
+% set text variables for later drawing
+Screen('TextStyle', w, 1);
+Screen('TextSize', w, 80);
+
 do_fixation(w, sess);
 ts.end_dummy = Screen('Flip', w);
 fprintf(event_fid, event_form, ts.end_dummy, 0, 'end dummy');
 
-reward_total = 0; % initiate reward total variable
 for count_trials = 1:max(trials.trial_num)
     
     % set parameters here
@@ -226,43 +240,42 @@ for count_trials = 1:max(trials.trial_num)
             cCols(:, 3-target_loc) = sess.reward_colours(:,1);
     end
     
-   
-    Priority(topPriorityLevel);    
-    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % VISUAL EVENTS
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if ~any(debug)
-        pulse_time = waitPulse; % wait for the next pulse before starting
-    else
-        pulse_time = GetSecs;
-    end
     % the following function will take between .9340 and 1.0340 s. The idea
-    % is that the visual events function will fun - then the code will wait
+    % is that the visual events function will run - then the code will wait
     % until the pulse_time + the relevant number of seconds, before
     % continuing
+    % get trial start time 
+    ts.pulses(1, count_trials) = pulse_time;
     [ts] = do_visual_events(w, count_trials, ts, sess, trial_cue, target_loc, ccw, hrz, cCols, ...
                             angle, contrast, 1, event_fid, event_form); % visual events have occurred
     % now draw fixation, but don't flip until the relevant time period has
     % gone by
     do_fix_full(w, sess, cCols, 1);
-    ts.resp_start(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nVis)-.01); % so the flip should occur 10 ms before the desired pulse
+    ts.resp_start(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nVis)-time.pre_pulse_flip); % so the flip should occur 10 ms before the desired pulse   
     if ~any(debug)
         pulse_time = waitPulse; % collect new pulse time, to implement things in the response period
     else
         pulse_time = GetSecs;
     end
+    ts.pulses(2, count_trials) = pulse_time;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % RESPONSE PERIOD
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
     do_fix_full(w, sess, cCols, 1);
-    ts.resp_end(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nResp)-.01); % flip should occur 10 ms before the end of the response period
-    if ~any(debug)
-        pulse_time = waitPulse;
+    ts.resp_end(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nResp)-time.pre_pulse_flip); % flip should occur 10 ms before the end of the response period
+    if TR.TR < 1.9
+        if ~any(debug)
+            pulse_time = waitPulse;
+        else
+            pulse_time = GetSecs;
+        end
     else
         pulse_time = GetSecs;
     end
-    
+    ts.pulses(3, count_trials) = pulse_time;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % SCORE AND GIVE FEEDBACK
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
@@ -272,32 +285,33 @@ for count_trials = 1:max(trials.trial_num)
     reward_total = reward_total + response.reward_value;
     % print the output
     fprintf(trls_fid, trl_form, sess.sub_num, sess.session, trial_count, reward, target_loc, trial_cue, contrast(1), contrast(2), ccw, response.correct, response.rt, response.reward_value);
-    
-    do_fixation(w, sess);
-    ts.fix_on(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nFeed)-.01);
+ 
+    ts.f_fix_on(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nFeed)-time.pre_pulse_flip);
     if ~any(debug)
         pulse_time = waitPulse;
     else
         pulse_time = GetSecs;
     end
-    
+    ts.pulses(4, count_trials) = pulse_time;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % FINAL FIXATION PERIOD
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
     do_fixation(w, sess);    
-    ts.fix_off(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nFix)-.01);
+    ts.fix_off(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nFix)-time.pre_pulse_flip);
     if ~any(debug)
         pulse_time = waitPulse;
     else
         pulse_time = GetSecs;
     end
-    Priority(0);  
+  
     fprintf( event_fid, event_form, ts.fix_off(count_trials), 0, 'final fix' );
     
     % save the ts structure
     save([sub_dir '/' events_mat_fname], 'ts');
+       
     
 end
+Priority(0);
 
 % close the behaviour log
 fclose( trls_fid );

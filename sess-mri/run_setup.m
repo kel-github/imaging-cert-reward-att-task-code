@@ -5,7 +5,7 @@ resolution = [1600 1200]; %
 
 %% Parameters
 load('counterBalance_task_learn_att')
-colours = [143, 126, 160; 230 93 85]';
+colours = [182, 133, 58; 230 93 85]';
 
 sess.cbalance = p_counterbalance(:, sess.sub_num);
 
@@ -54,7 +54,7 @@ end
 
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));
-PsychDebugWindowConfiguration;
+%PsychDebugWindowConfiguration;
 Screen('Preference','SkipSyncTests', 1); 
 white = WhiteIndex(screen_index);
 black = BlackIndex(screen_index);
@@ -69,6 +69,7 @@ sess.config.stim_light = stim_light;
 sess.config.reward_colour = [255, 215, 0];
 
 [w, rect] = Screen('OpenWindow', screen_index, grey, [], [], [], 0, 8);
+%[w, rect] = Screen('OpenWindow', screen_index, black, [], [], [], 0, 8);
 Screen(w, 'Flip');
 
 [x_pix, y_pix] = Screen('WindowSize', w);
@@ -81,22 +82,22 @@ topPriorityLevel = 1; %MaxPriority(w);
 gabor_r = round(3*get_ppd());
 [gabor_id, gabor_rect] = ...
     CreateProceduralGabor(w, gabor_r, gabor_r, 0, [0.5, 0.5, 0.5, 1.0], ...
-                          1, 0.5);
+                          1, 0.5);                   
 sess.config.gabor_id = gabor_id;
 sess.config.gabor_rect = gabor_rect;
 
 % Setup text
 Screen('TextStyle', w, 1);
-Screen('TextSize', w, 80); 
+Screen('TextSize', w, 35); 
 
 % Define responses and initiate kb queue
 KbName('UnifyKeyNames');
 keys = zeros(1,256);
 if sess.resp_order
-    task.responses = KbName({'j','f'});
+    task.responses = KbName({'2@','3#'});
     keys(task.responses) = 1;
 else
-    task.responses = KbName({'f','j'});
+    task.responses = KbName({'3#','2@'});
     keys(task.responses) = 1;
 end
 KbQueueCreate(-1, keys);
