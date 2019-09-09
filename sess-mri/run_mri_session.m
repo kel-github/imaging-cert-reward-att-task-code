@@ -75,7 +75,7 @@ else
     sub_str = '%d';
 end
 if sess.run == 1
-    json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d.json'], sess.sub_num, sess.session, sess.acq);
+    json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_bold.json'], sess.sub_num, sess.session, sess.acq);
     meta_data.sub          = sess.sub_num;
     meta_data.session      = sess.session;
     meta_data.date         = datetime;
