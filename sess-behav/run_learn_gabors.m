@@ -61,14 +61,14 @@ rng(r_num);
 rngstate = rng;
 
 run_setup;
-task_str = 'learn-gabors';
+task_str = 'learnGabors';
 json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
 
 meta_data.sub          = sess.sub_num;
 meta_data.session      = sess.session;
 meta_data.date         = datetime;
 meta_data.task         = task_str;
-meta_data.BIDS         = 'v1.1';
+meta_data.BIDS         = 'v1.0.2';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';

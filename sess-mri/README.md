@@ -19,7 +19,6 @@ TR .7 = 10.52 mins
 TR 1.51 = 13.02 
 TR 1.92 = 12.44 
 
-
 For each participant, the code is run _n_ times for _n_ blocks
 
 Any questions? getkellygarner@gmail.com  

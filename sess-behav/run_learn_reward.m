@@ -65,13 +65,13 @@ rngstate = rng;
 run_setup;
 
 %% Generate json metadata for this task and session
-task_str = 'learn-reward';
+task_str = 'learnReward';
 json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
 meta_data.sub          = sess.sub_num;
 meta_data.session      = sess.session;
 meta_data.date         = datetime;
-meta_data.task         = 'learn-rewards';
-meta_data.BIDS         = 'v1.1';
+meta_data.task         = 'learnReward';
+meta_data.BIDS         = 'v1.0.2';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
@@ -203,7 +203,7 @@ end
 % OPEN A FILE TO RECORD THE LOG HERE
 %% Generate basis for trial structure and set up log files for writing to
 fclose(events_fid); % close the previous event file
-task_str = 'exp-test';
+task_str = 'learnAttExp';
 events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.tsv');
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot');

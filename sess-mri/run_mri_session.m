@@ -68,7 +68,7 @@ rngstate = rng;
 run_setup;
 
 %% Generate json metadata for this task and session
-task_str = 'mri-exp-test';
+task_str = 'learnAtt';
 if sess.sub_num < 10
     sub_str = '0%d';
 else
@@ -79,8 +79,8 @@ if sess.run == 1
     meta_data.sub          = sess.sub_num;
     meta_data.session      = sess.session;
     meta_data.date         = datetime;
-    meta_data.task         = 'mri-val-inf-att-v1';
-    meta_data.BIDS         = 'v1.1';
+    meta_data.task         = 'learnAtt';
+    meta_data.BIDS         = 'v1.0.2';
     meta_data.resp_order   = sess.resp_order;
     if ~any(sess.resp_order)
         meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
@@ -90,6 +90,8 @@ if sess.run == 1
     meta_data.reward_key   = 'row 1 = high reward col, row 2 = low reward col, rgb';
     meta_data.reward_cols  = sess.reward_colours;
     meta_data.target_contrast = sess.contrast;
+    meta_data.matlabVersion = '2018b';
+    meta_data.PTBVersion    = '3.0.15';
     generate_meta_data_jsons(meta_data, sub_dir, json_log_fname);
 end
 

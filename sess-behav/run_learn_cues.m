@@ -70,13 +70,13 @@ run_setup;
 
 %% Generate json metadata for this task and session
 addpath('JSONio/');
-task_str = 'learn-cues'; 
+task_str = 'learnCues'; 
 json_log_fname = generate_filename(['_ses-0%d_task-', task_str], sess, '.json');
 meta_data.sub          = sess.sub_num;
 meta_data.session      = sess.session;
 meta_data.date         = datetime;
-meta_data.task         = 'learn-cues';
-meta_data.BIDS         = 'v1.1';
+meta_data.task         = 'learnCues';
+meta_data.BIDS         = 'v1.0.2';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
