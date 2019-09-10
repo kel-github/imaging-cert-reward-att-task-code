@@ -5,7 +5,7 @@ resolution = [1024 768]; % might change this with psychtoolbox - get stuff
 
 %% Parameters
 load('counterBalance_task_learn_att')
-colours = [143, 126, 160; 230 93 85]';
+colours = [182, 133, 58; 230 93 85]';
 
 sess.cbalance = p_counterbalance(:, sess.sub_num);
 
