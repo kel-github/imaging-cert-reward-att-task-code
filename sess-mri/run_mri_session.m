@@ -144,14 +144,14 @@ contrast                = sess.contrast;
 % set TR/time-based parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 TR.TR = sess.TR;
-
+TRs = [.7, 1.51, 1.92];
 if TR.TR < 1
     TR.nVis = 2;
     TR.nResp = 2;
     TR.nFeed = 2;
     TR.nFix = 1;
     time.pre_pulse_flip = .08; % how long before the pulse to flip
-elseif TR.TR > 1 && TR.TR ~= 1.9
+elseif TR.TR > 1 && TR.TR ~= TRs(3)
     TR.nVis = 1;
     TR.nResp = 1;
     TR.nFeed = 1;
@@ -245,7 +245,7 @@ for count_trials = 1:max(trials.trial_num)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % VISUAL EVENTS
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % the following function will take between .9340 and 1.0340 s. The idea
+    % the following function will take between .9340 and 1.1 s. The idea
     % is that the visual events function will run - then the code will wait
     % until the pulse_time + the relevant number of seconds, before
     % continuing
@@ -306,7 +306,7 @@ for count_trials = 1:max(trials.trial_num)
         pulse_time = GetSecs;
     end
   
-    fprintf( event_fid, event_form, ts.fix_off(count_trials), 0, 'final fix' );
+    fprintf( event_fid, event_form, ts.fix_off(count_trials), 0, 'final fix' ); % this is happening 2.81 secs after the feedback message is being sent
     
     % save the ts structure
     save([sub_dir '/' events_mat_fname], 'ts');

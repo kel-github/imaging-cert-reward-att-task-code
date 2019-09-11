@@ -51,7 +51,6 @@ if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
 
-
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));
 %PsychDebugWindowConfiguration;
@@ -93,10 +92,10 @@ Screen('TextSize', w, 35);
 % Define responses and initiate kb queue
 KbName('UnifyKeyNames');
 keys = zeros(1,256);
-if sess.resp_order
+if sess.resp_order == 1
     task.responses = KbName({'2@','3#'});
     keys(task.responses) = 1;
-else
+elseif sess.resp_order == 2
     task.responses = KbName({'3#','2@'});
     keys(task.responses) = 1;
 end

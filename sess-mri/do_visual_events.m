@@ -107,7 +107,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     hold_time = time.hold + rand*time.hold_v;
     [ts.target(n)] = Screen('Flip', wh, ts.hold(n)+hold_time);
     
-    % Mask the targets.
+    % Mask the masks.
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     draw_masks(wh, gabor_rect, 0.4*get_ppd(), white, grey, glb_alph);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
