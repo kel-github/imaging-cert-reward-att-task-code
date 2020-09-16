@@ -41,7 +41,7 @@ angle = 45;
 
 %% Generate json metadata for this task and session
 addpath('JSONio');
-proj_loc = '../striwp1';
+proj_loc = '~/Documents/striwp1';
 if sess.sub_num < 10
     sub_dir = sprintf([proj_loc, '/', 'sub-0%d/ses-0%d/func'], sess.sub_num, sess.session);
 else
@@ -53,7 +53,7 @@ end
 
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));
-%PsychDebugWindowConfiguration;
+PsychDebugWindowConfiguration;
 Screen('Preference','SkipSyncTests', 1); 
 white = WhiteIndex(screen_index);
 black = BlackIndex(screen_index);

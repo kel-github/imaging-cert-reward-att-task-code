@@ -32,7 +32,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 1;
+debug = 0;
 
 % initialise mex files etc
 KbCheck;
@@ -51,7 +51,7 @@ else
     sess.sub_num = input('Subject Number? ');
     sess.session = input('Session? ');
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
-    sess.skip_init_train = 0;
+    sess.skip_init_train = 1;
 end
 
 % time cheats
@@ -238,7 +238,7 @@ run_task_instructions(w, white);
 n_trials_between_breaks = 20;
 n_positions             = 2;
 training                = 0;
-cues                    = [1, 3, 2];
+% cues                    = [1, 3, 2];
 contrast                = sess.contrast;
 
 %%

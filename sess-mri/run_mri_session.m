@@ -23,7 +23,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 1;
+debug = 0;
 
 % initialise mex files etc
 KbCheck;
@@ -82,7 +82,7 @@ if sess.run == 1
     meta_data.task         = 'learnAtt';
     meta_data.BIDS         = 'v1.0.2';
     meta_data.resp_order   = sess.resp_order;
-    if ~any(sess.resp_order)
+    if sess.resp_order == 1
         meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
     else
         meta_data.resp_key      = 'clockwise: j, anticlockwise: f';
@@ -233,7 +233,7 @@ for count_trials = 1:max(trials.trial_num)
         case 2
             cCols = zeros(3,2);
             cCols(:, target_loc)   = sess.reward_colours(:,1);
-            cCols(:, 3-target_loc) = sess.reward_colours(:,2);
+            cCols(:, 3-target_loc) = sess.reward_colours(:,2); % the second colour in this variable is the high reward value
         case 3
             cCols = [sess.reward_colours(:,2), sess.reward_colours(:,2)];
         case 4

@@ -25,14 +25,14 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, skips the initital 20 training 
 % trials, and results in the cursor not being hidden
-debug = 1;
+debug = 0;
 
 % initialise mex files etc
 KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-% Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
 if debug

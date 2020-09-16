@@ -11,14 +11,14 @@ KbQueueStop;
 
 if any(key_is_down)
     
-    if first_press(task.responses(1)) > 0 && ...
+    if first_press(task.responses(1)) > 0 && ... % if both keys have been pressed
             first_press(task.responses(2)) > 0
         response.ccw = first_press(task.responses(2)) < ...
-            first_press(task.responses(1));
-        ts.response(n) = min(first_press(task.responses));
+            first_press(task.responses(1)); % if counterclockwise occurred earlier than the clockwise response then put counterclockwise, if not put 1 for counterclockwise, if not put 0 for clockwise
+        ts.response(n) = min(first_press(task.responses)); % and put the time of the response that occurred first
     else
-        response.ccw = first_press(task.responses(2)) > 0;
-        ts.response(n) = max(first_press(task.responses));
+        response.ccw = first_press(task.responses(2)) > 0; % if the second response was pressed put a 1 for counterclockwise, if not a zero for clockwise
+        ts.response(n) = max(first_press(task.responses)); % put down the only recorded time for a response time
     end
     response.rt = ts.response(n) - ts.target(n);
     fprintf(event_fid, event_form, ts.response(n), -response.rt, "response"); % event info stuff
