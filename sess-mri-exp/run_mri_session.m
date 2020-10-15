@@ -53,7 +53,6 @@ end
 
 % set acquisition variable for naming files
 sess.acq = sess.TR*1000;
-
 % time cheats
 expand_time = 1;
 parent = cd;
@@ -199,8 +198,10 @@ ts.pulses = zeros(4, size(ts.fix_off, 2)); % collect the onset time of every pul
 % pre-load variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Priority(topPriorityLevel);    
+Priority(topPriorityLevel);  
+% time cheats
 run_pre_trials; % to pre-load all variables
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % show instructions for dummy scans
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,7 +350,7 @@ fclose( event_fid );
 
 % end this stage of the experiment
 instructions = ...
-    sprintf('Well done! You have finished! :)\n');
+    sprintf('Well done,\n you excellent point winner! :)\n');
 DrawFormattedText(w, instructions, 'Center', 'Center', white, 115);
 Screen('Flip', w);
 start_ts = KbWait;

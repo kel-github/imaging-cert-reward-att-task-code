@@ -1,8 +1,7 @@
 # Imaging the influence of value and certainty on visual attention  
 ## STRIAVISE WP1
 
-Task code for collection of behavioural data in the MRI scanner with: 
-TRs 1.51, 1.92, .7 
+Task code for collection of behavioural data in the MRI scanner with TRs 1.92
 
 (c) Kelly Garner, 2018  
 Free to use and share, please cite author/source  
@@ -14,10 +13,9 @@ Run all *.m files from the same folder. Keep all *.m files in the folder from wh
 
 The code is written to handle the three TRs mentioned above. Accepts '5%' as the trigger from the scanner. '2@' and '3#' for responses.
 
-Run durations:
-TR .7 = 10.52 mins
-TR 1.51 = 13.02 
-TR 1.92 = 12.44 
+Run duration:
+Staircasing (learn_gabors) = 10 minutes
+5 * 1.92 (dummy scans) + 128 * 3 * 1.92 (trials) + 5 seconds (end) = 12:53 per run
 
 For each participant, the code is run _n_ times for _n_ blocks
 

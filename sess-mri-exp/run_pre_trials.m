@@ -1,7 +1,7 @@
-%%%% this code runs 3 inital trials, without waiting for pulses
+%%%% this code runs 2 inital trials, without waiting for pulses
 %%%% so that all functions are used prior to the first trial
 
-for count_trials = 1:3
+for count_trials = 1:2
     
     % set parameters here
     trial_count = trials.trial_num(count_trials);
