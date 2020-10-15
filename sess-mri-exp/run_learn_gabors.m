@@ -54,8 +54,8 @@ expand_time = 1;
 parent = cd;
 
 %% Randomisation seed now based on subject and session number
-stage = '2';
-r_num = ['2' num2str(sess.sub_num) '000' num2str(sess.session) stage];
+stage = '4';
+r_num = ['4' num2str(sess.sub_num) '000' num2str(sess.session) stage];
 r_num = str2double(r_num);
 rng(r_num);
 rngstate = rng;
@@ -210,7 +210,7 @@ si = i;
         
         % update trial log
         % print the output file
-        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, ci, contrast(1), contrast(2), ccw(i), resp.correct, resp.rt);
+        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, ci, contrast(1), contrast(2), ccw(i), response.correct, response.rt);
         % take break?
         if ~any(mod(trial_count, n_trials_between_breaks))
             take_break(w, white, task);
@@ -228,9 +228,8 @@ generate_meta_data_jsons(meta_data, project_dir, json_log_fname);
 fclose(events_fid);
 % end this stage of the experiment
 instructions = ...
-    sprintf(['Well done! You have finished level 1\n' ...
-    'see the experimenter for instructions for\n' ...
-    'level 2\n']);
+    sprintf(['Thanks! You have finished level 1\n' ...
+    'Level 2 coming up!\n']);
 DrawFormattedText(w, instructions, 'Center', 'Center', white, 115);
 Screen('Flip', w);
 start_ts = KbWait;
