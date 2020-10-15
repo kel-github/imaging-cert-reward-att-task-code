@@ -1,9 +1,9 @@
 function [trials] = generate_blocks_FourRewardCont_singleRun(tblocks)
 %GENERATE_TRIALS Generate trial blocks for habit reward task.
 %   Creates a list of randomised trials. Counterbalancing will
-%   always be over the smallest window possible which is 360 trials. 
+%   always be over the smallest window possible which is 128 trials. 
 %   
-%   tblocks = the total number iof iterations over 360 trials to perform
+%   tblocks = the total number iof iterations over 128 trials to perform
 
 %   The format of the returned matrix is:
 %

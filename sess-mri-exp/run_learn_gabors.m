@@ -36,7 +36,7 @@ Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
 if debug
-    sess.sub_num = 2;
+    sess.sub_num = 5;
     sess.session = 2;
     sess.eye_on  = 0;
     sess.skip_init_train = 0;
@@ -75,14 +75,17 @@ if ~any(sess.resp_order)
 else
     meta_data.resp_key      = 'clockwise: j, anticlockwise: f';
 end
+meta_data.map          = 'j = 2@, f = 3#';
 
 project_dir    = sub_dir;
 
 %% Generate basis for trial structure and set up log files for writing to
-events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.tsv');
+events_fname = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.tsv');
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'loc', 'co1', 'co2', 'or', 'resp', 'rt');
 trl_form = '%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\n';
+events_json = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.json');
+generate_event_data_jsons(sub_dir, events_json);
 
 %% start running experiment
 if ~debug

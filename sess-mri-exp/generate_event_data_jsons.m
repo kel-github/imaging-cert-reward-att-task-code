@@ -25,7 +25,6 @@ event_data.co2 = 'contrast: right gabor';
 event_data.or = '0=cw, 1=ccw';
 event_data.resp = '0=cw, 1=ccw';
 event_data.rt = 'response time';
-event_data.rew_tot = 'if present: total reward accrued';
 
 json = event_data;
 

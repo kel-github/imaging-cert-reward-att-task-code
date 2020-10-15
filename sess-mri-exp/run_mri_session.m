@@ -34,7 +34,7 @@ AssertOpenGL
 
 sess.date = clock;
 if debug
-    sess.sub_num = 2; 
+    sess.sub_num = 5; 
     sess.session = 2;
     sess.run = 1;
     sess.eye_on  = 0;
@@ -58,7 +58,7 @@ expand_time = 1;
 parent = cd;
 
 %% Randomisation seed now based on subject and stage number
-stage = '4';
+stage = '5';
 r_num = ['1' num2str(sess.sub_num) '000' num2str(sess.session) stage];
 r_num = str2double(r_num);
 rng(r_num);
@@ -73,36 +73,36 @@ if sess.sub_num < 10
 else
     sub_str = '%d';
 end
-if sess.run == 1
-    json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_bold_run-0%d.json'], sess.sub_num, sess.session, sess.acq, sess.run);
-    meta_data.sub          = sess.sub_num;
-    meta_data.session      = sess.session;
-    meta_data.date         = datetime;
-    meta_data.task         = 'learnAtt';
-    meta_data.BIDS         = 'v1.0.2';
-    meta_data.resp_order   = sess.resp_order;
-    if sess.resp_order == 1
-        meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
-    else
-        meta_data.resp_key      = 'clockwise: j, anticlockwise: f';
-    end
-    meta_data.reward_key   = 'row 1 = high reward col, row 2 = low reward col, rgb';
-    meta_data.reward_cols  = sess.reward_colours;
-    meta_data.target_contrast = sess.contrast;
-    meta_data.matlabVersion = '2018b';
-    meta_data.PTBVersion    = '3.0.15';
+
+json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_bold_run-0%d.json'], sess.sub_num, sess.session, sess.acq, sess.run);
+meta_data.sub          = sess.sub_num;
+meta_data.session      = sess.session;
+meta_data.date         = datetime;
+meta_data.task         = 'learnAtt';
+meta_data.BIDS         = 'v1.0.2';
+meta_data.resp_order   = sess.resp_order;
+if sess.resp_order == 1
+    meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
+else
+    meta_data.resp_key      = 'clockwise: j, anticlockwise: f';
 end
+meta_data.map          = 'j = 2@, f = 3#';
+meta_data.reward_key   = 'row 1 = high reward col, row 2 = low reward col, rgb';
+meta_data.reward_cols  = sess.reward_colours;
+% meta_data.target_contrast = sess.contrast;
+meta_data.matlabVersion = '2018b';
+meta_data.PTBVersion    = '3.0.15';
+
 
 if ~any(debug)
-    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
+    json_rd_fname = generate_filename('_ses-0%d_task-learnGabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
     sess.contrast = meta_data.target_contrasts; % for use during the session
     clear tmp
-    meta_data.target_contrasts = sess.contrast;
-    if sess.run == 1
-       generate_meta_data_jsons(meta_data, sub_dir, json_log_fname); 
-    end
+    %meta_data.target_contrasts = sess.contrast;
+    generate_meta_data_jsons(meta_data, sub_dir, json_log_fname); 
+
 else
     meta_data.target_contrasts = [.2 .2];
 end
@@ -126,14 +126,44 @@ trls_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_ru
 trls_fid = fopen(fullfile( sub_dir, trls_fname), 'w');
 fprintf(trls_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\n';
+% insert one json generate here
+event_data.sub = 'subject number';
+event_data.sess = 'session number';
+event_data.date = datetime;
+event_data.t = 'trial number';
+event_data.rew = 'reward available: 1 = high (50), 0 = low (5)';
+event_data.loc = '1=tgt left, 2=tgt right';
+event_data.cue = 'ptgtleft|cue, 1=.8, 2=.2,3=.5';
+event_data.co1 = 'contrast: left gabor';
+event_data.co2 = 'contrast: right gabor';
+event_data.or = '0=cw, 1=ccw';
+event_data.resp = '0=cw, 1=ccw';
+event_data.rt = 'response time';
+event_data.rew_tot = 'total reward accrued';
+event_json_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls.json'], ...
+                            sess.sub_num, sess.session, sess.acq, sess.run);
+generate_meta_data_jsons(event_data, sub_dir, event_json_fname); 
 
 trials = generate_blocks_FourRewardCont_singleRun(1); % for 128 trials
 % save the trial table to a file so that we can get other parameters later
 % (such as block number, hrz)
-tbl_fname       = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls'], ...
+tbl_fname       = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls_tbl'], ...
                         sess.sub_num, sess.session, sess.acq, sess.run);
 trial_tbl_fname = fullfile(sub_dir, tbl_fname);
 writetable(trials, trial_tbl_fname);
+% insert a second json generate here
+trls_data.date = datetime;
+trls_data.trial_num = 'trial number (t)';
+trls_data.block_num = '2 blocks x 360 t';
+trls_data.reward_type = 'reward cueing condition: 1=h/h, 2=h/l, 3=l/l, 4=l/h';
+trls_data.reward_trial = 'high or low reward on this trial: 1 = high reward, 2 = low reward';
+trls_data.probability = 'p target left | cue: 1=.8, 2=.2,3=.5';
+trls_data.position = 'target location: 0 = left, 1 = right';
+trls_data.ccw = 'target orientation: 0 = cw, 1 = ccw';
+trls_data.hrz = 'distracter orientation" 0 = hrz, 1 = vertical';
+tbl_json_fname  = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls_tbl.json'], ...
+                        sess.sub_num, sess.session, sess.acq, sess.run);
+generate_meta_data_jsons(trls_data, sub_dir, tbl_json_fname); 
 
 % set up name of event file that the timing outputs will be sent to
 events_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_events.tsv'], ...
@@ -141,7 +171,14 @@ events_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_
 event_fid = fopen(fullfile( sub_dir, events_fname ), 'w' );
 fprintf( event_fid, '%s\t%s\t%s\n','onset', 'duration', 'event');
 event_form = '%f\t%1.4f\t%s\n';
-
+% 1 last json here
+ets.onset = 'onset time';
+ets.duration = 'duration of event';
+ets.event = 'event type';
+ets_fname =  sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_events.json'], ...
+                        sess.sub_num, sess.session, sess.acq, sess.run); 
+generate_meta_data_jsons(ets, sub_dir, ets_fname); 
+                                      
 % and for the mat file
 events_mat_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_events'], ...
                             sess.sub_num, sess.session, sess.acq, sess.run);
