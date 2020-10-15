@@ -34,7 +34,7 @@ AssertOpenGL
 
 sess.date = clock;
 if debug
-    sess.sub_num = 2;
+    sess.sub_num = 2; 
     sess.session = 2;
     sess.run = 1;
     sess.eye_on  = 0;
@@ -74,7 +74,7 @@ else
     sub_str = '%d';
 end
 if sess.run == 1
-    json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_bold.json'], sess.sub_num, sess.session, sess.acq);
+    json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_bold_run-0%d.json'], sess.sub_num, sess.session, sess.acq, sess.run);
     meta_data.sub          = sess.sub_num;
     meta_data.session      = sess.session;
     meta_data.date         = datetime;

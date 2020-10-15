@@ -36,7 +36,7 @@ Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
 if debug
-    sess.sub_num = 2;
+    sess.sub_num = 5;
     sess.session = 1;
     sess.eye_on  = 0;
     sess.skip_init_train = 0;
