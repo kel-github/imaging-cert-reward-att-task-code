@@ -40,7 +40,7 @@ AssertOpenGL
 
 sess.date = clock;
 if debug
-    sess.sub_num = 2;
+    sess.sub_num = 5;
     sess.session = 1;
     sess.eye_on  = 0;
     sess.skip_init_train = 1;
@@ -49,7 +49,7 @@ else
     sess.session = input('Session? ');
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
     sess.skip_init_train = 0;
-    sess.contrast = [0.07389999999999999,0.05];
+    %sess.contrast = [0.07389999999999999,0.05];
 end
 
 % time cheats
@@ -73,6 +73,11 @@ meta_data.session      = sess.session;
 meta_data.date         = datetime;
 meta_data.task         = 'learnReward';
 meta_data.BIDS         = 'v1.0.2';
+meta_data.Matlab       = 'v';
+meta_data.PTB          = 'v';
+meta_data.PC           = ' ';
+meta_data.display      = ' ';
+meta_data.display_dist = '57 cm';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
@@ -87,11 +92,11 @@ project_dir    = sub_dir;
 
 % get filename to read contrast params from initital session
 if ~any(debug)
-%     json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
-%     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
-%     meta_data.target_contrasts = tmp.target_contrasts;
-%     sess.contrast = meta_data.target_contrasts; % for use during the session
-%     clear tmp
+    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
+    tmp = jsonread(fullfile(sub_dir, json_rd_fname));
+    meta_data.target_contrasts = tmp.target_contrasts;
+    sess.contrast = meta_data.target_contrasts; % for use during the session
+    clear tmp
     meta_data.target_contrasts = sess.contrast;
 else
     meta_data.target_contrasts = [.5, .5];
@@ -105,6 +110,8 @@ events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\n';
+events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.json');
+generate_event_data_jsons(sub_dir, events_json);
 
 %% Start experiment
 if ~debug
@@ -210,6 +217,8 @@ events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\n';
+events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.json');
+generate_event_data_jsons(sub_dir, events_json);
 
 sess.set_types = [1 1 1 1 1 1];
 trials = generate_blocks_FourRewardCont(2); % for 720 trials
@@ -218,6 +227,10 @@ trials = generate_blocks_FourRewardCont(2); % for 720 trials
 tbl_fname       = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.csv');
 trial_tbl_fname = fullfile(sub_dir, tbl_fname);
 writetable(trials, trial_tbl_fname);
+% write json meta data for the trials
+trtbl_fname     = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.json');
+generate_trls_data_jsons(sub_dir, trtbl_fname);
+
 % write json meta data for this stage
 json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
 meta_data.task = task_str;

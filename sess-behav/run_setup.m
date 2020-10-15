@@ -43,7 +43,7 @@ angle = 45;
 
 
 %% Generate the folder for this session
-session_data_loc = '~/Dropbox/MC-Projects/imaging-value-cert-att/striwp1';
+session_data_loc = '~/Documents/striwp1';
 if sess.sub_num < 10
     sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
 else

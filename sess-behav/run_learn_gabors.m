@@ -69,7 +69,13 @@ meta_data.session      = sess.session;
 meta_data.date         = datetime;
 meta_data.task         = task_str;
 meta_data.BIDS         = 'v1.0.2';
+meta_data.Matlab       = 'v';
+meta_data.PTB          = 'v';
+meta_data.PC           = ' ';
+meta_data.display      = ' ';
+meta_data.display_dist = '57 cm';
 meta_data.resp_order   = sess.resp_order;
+
 if ~any(sess.resp_order)
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
 else
@@ -83,6 +89,8 @@ events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'loc', 'co1', 'co2', 'or', 'resp', 'rt');
 trl_form = '%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\n';
+events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.json');
+generate_event_data_jsons(sub_dir, events_json);
 
 %% start running experiment
 if ~debug

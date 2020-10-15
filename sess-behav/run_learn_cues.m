@@ -31,7 +31,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 0;
+debug = 1;
 
 % initialise mex files etc
 KbCheck;
@@ -42,7 +42,7 @@ AssertOpenGL
 
 sess.date = clock;
 if debug
-    sess.sub_num = 2;
+    sess.sub_num = 5;
     sess.session = 1;
     sess.eye_on  = 0;
     sess.skip_init_train = 1;
@@ -51,7 +51,7 @@ else
     sess.session = input('Session? ');
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
     sess.skip_init_train = 0;
-    sess.contrast = [.0739, .05];
+    %sess.contrast = [.0739, .05];
 end
 
 % time cheats
@@ -78,6 +78,11 @@ meta_data.session      = sess.session;
 meta_data.date         = datetime;
 meta_data.task         = 'learnCues';
 meta_data.BIDS         = 'v1.0.2';
+meta_data.Matlab       = 'v';
+meta_data.PTB          = 'v';
+meta_data.PC           = ' ';
+meta_data.display      = ' ';
+meta_data.display_dist = '57 cm';
 meta_data.resp_order   = sess.resp_order;
 if ~any(sess.resp_order)
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
@@ -106,7 +111,8 @@ events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
 fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt');
 trl_form = '%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\n';
-
+events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.json');
+generate_event_data_jsons(sub_dir, events_json);
 
 %% Start experiment
 if ~debug
