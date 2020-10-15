@@ -89,11 +89,11 @@ project_dir    = sub_dir;
  
 % get filename to read contrast params from initital session
 if ~any(debug)
-%     json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
-%     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
-%     meta_data.target_contrasts = tmp.target_contrasts;
-%     sess.contrast = meta_data.target_contrasts; % for use during the session
-%     clear tmp
+    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
+    tmp = jsonread(fullfile(sub_dir, json_rd_fname));
+    meta_data.target_contrasts = tmp.target_contrasts;
+    sess.contrast = meta_data.target_contrasts; % for use during the session
+    clear tmp
     meta_data.target_contrasts = sess.contrast;
 else
     meta_data.target_contrasts = [.2 .2];

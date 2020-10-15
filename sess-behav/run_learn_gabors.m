@@ -25,7 +25,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, skips the initital 20 training 
 % trials, and results in the cursor not being hidden
-debug = 0;
+debug = 1;
 
 % initialise mex files etc
 KbCheck;
@@ -142,14 +142,14 @@ if ~any(sess.skip_init_train)
         
         % run the trial
         Priority(topPriorityLevel);
-        [valid, resp, ts] = do_trial(w, sess, task, -1, trls_targets(trial_count), trls_ccw(trial_count), ...
+        [valid, response, ts] = do_trial(w, sess, task, -1, trls_targets(trial_count), trls_ccw(trial_count), ...
             trls_hrz(trial_count), cols4cues, angle, [1, 1], 0, reward, 0, training);
         Priority(0);
         % print the output
-        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, trls_targets(trial_count), 1, 1, trls_ccw(trial_count), resp.correct, resp.rt);
+        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, trls_targets(trial_count), 1, 1, trls_ccw(trial_count), response.correct, response.rt);
         
         % can we terminate the loop yet?
-        resp_tally = [resp.correct, resp_tally];
+        resp_tally = [response.correct, resp_tally];
         if trial_count >= min_trials
             prct = sum(resp_tally(1:min_trials))/trial_count;
             if prct > .8
@@ -175,12 +175,12 @@ for i = 1:numel(targets)
     trial_count = trial_count + 1;
     ci = targets(i);
     Priority(topPriorityLevel);
-    [valid, resp, ts] = do_trial(w, sess, task, -1, targets(i), ccw(i), ...
+    [valid, response, ts] = do_trial(w, sess, task, -1, targets(i), ccw(i), ...
         hrz(i), cols4cues, angle, contrast, 1, reward, 0, training);
     Priority(0);
 
     % print the output file
-    fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, targets(i), 1, 1, ccw(i), resp.correct, resp.rt);
+    fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, targets(i), 1, 1, ccw(i), response.correct, response.rt);
     start_ts = ts.end;
 end
 
@@ -242,7 +242,7 @@ n_trials_between_breaks = 24;
         
         % update trial log
         % print the output file
-        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, ci, contrast(ci), contrast(ci), ccw(i), resp.correct, resp.rt);
+        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, ci, contrast(ci), contrast(ci), ccw(i), response.correct, response.rt);
         
         % take break?
         if ~any(mod(trial_count, n_trials_between_breaks))
@@ -273,7 +273,7 @@ si = i;
         
         % update trial log
         % print the output file
-        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, ci, contrast(1), contrast(2), ccw(i), resp.correct, resp.rt);
+        fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, ci, contrast(1), contrast(2), ccw(i), response.correct, response.rt);
         % take break?
         if ~any(mod(trial_count, n_trials_between_breaks))
             take_break(w, white, task);
