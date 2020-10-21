@@ -41,10 +41,10 @@ if debug
     inputs.blockdur = 10;
     inputs.nblock = 2;
     inputs.fixsize = 100;
-    inputs.scDim = [1080 900];
-    inputs.eyeDistmm = [700 700];
-    inputs.testid = 'debug';
-    sess.eye_on = 0;
+    inputs.scDim = [530 300];
+    inputs.eyeDistmm = [650 550];
+    inputs.testid = 'dbg';
+    sess.eye_on = 1;
 else
     inputs.bground = input('Please enter RGB values for background: [r, g, b] ');
     inputs.fixdown = input('Please enter RGB values for rest fixation: [r, g, b] ');
@@ -84,28 +84,33 @@ time.instruct_on = 5;
 if sess.eye_on
     el=initialise_eyes(w);
     sess.eyetrack = el;
+    sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));
 end
 
 %% set up Eyetracker
 if sess.eye_on
-    
-    [sess, el] = eyelink_initfile(el, sess, inputs); 
+    EyelinkDoTrackerSetup(el); % calibrate
+    [sess, el, edf] = eyelink_initfile(el, sess, inputs); 
     % set up log file
     lg_fn = sprintf('ElinkPrecTest_%s.txt', inputs.testid);
     lg_fid = fopen(lg_fn, 'w');
-    fprintf(lg_fid, '%s\t%s\t%s\t%s\t%s\t%s\n', 'xc','yc','x','y','r','rf'); % screen center x, screen center y, eylink x, eyelink y, radius from center, radius flag (point outside radius>) 
+    fprintf(lg_fid, '%s\t%s\t%s\t%s\t%s\t%s\n', 'x','y','xc','yc','r','rf'); % screen center x, screen center y, eylink x, eyelink y, radius from center, radius flag (point outside radius>) 
 end
 
 %% set up display
 HideCursor;
-% calibrate and validate
+
 if sess.eye_on
-    sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));
-    % may need EyelinkDoTrackerSetup here
     WaitSecs(0.1);
     Eyelink('StartRecording');
     WaitSecs(0.1);
+    
+    eye_used = Eyelink('EyeAvailable'); % Tracked eye - re-establish this after each calibration/recalibration
+    if eye_used == el.BINOCULAR % if both eyes are tracked
+        eye_used = el.LEFT_EYE; % use left eye
+    end    
 end
+
 %% go!
 for iBlock = 1:inputs.nblock
     
@@ -120,7 +125,7 @@ for iBlock = 1:inputs.nblock
         % get samples
         if sess.eye_on
             [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
-            check_dist(x, y, xc, yc, r, lg_fid);
+            check_dist(x, y, inputs.scDim(1)/2, inputs.scDim(2)/2, r, lg_fid);
         end             
     end
     
@@ -130,8 +135,9 @@ for iBlock = 1:inputs.nblock
     end
     if iBlock < inputs.nblock && sess.eye_on
         % calibrate and validate again
-      sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));
-      % may need EyelinkDoTrackerSetup here         
+      %sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));
+      % may need EyelinkDoTrackerSetup here   
+       EyelinkDoTrackerSetup(el); % calibrate
     end
 end
 
@@ -143,6 +149,7 @@ if sess.eye_on
     fclose(lg_fid);
     tdfread(lg_fn, '\t');
     plot_data(r, rf);
+    saveas(gcf, sprintf('ElinkPrecTest_%s', inputs.testid), 'pdf');
 end
 
 
@@ -151,7 +158,7 @@ end
 if sess.eye_on == 1
     Eyelink( 'StopRecording' );
     Eyelink( 'CloseFile' );
-    Eyelink( 'ReceiveFile', upper(edfFile) );
+    Eyelink( 'ReceiveFile', upper(edf) );
 end
 
 % close log files
