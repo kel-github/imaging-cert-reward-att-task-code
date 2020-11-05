@@ -94,7 +94,7 @@ if sess.eye_on
     % set up log file
     lg_fn = sprintf('ElinkPrecTest_%s.txt', inputs.testid);
     lg_fid = fopen(lg_fn, 'w');
-    fprintf(lg_fid, '%s\t%s\t%s\t%s\t%s\t%s\n', 'x','y','xc','yc','r','rf'); % screen center x, screen center y, eylink x, eyelink y, radius from center, radius flag (point outside radius>) 
+    fprintf(lg_fid, '%s\t%s\t%s\t%s\t%s\t%s\n', 'x','y','xc','yc','r','rf'); % eylink x, eyelink y, screen center x, screen center y, radius from center, radius flag (point outside radius>) 
 end
 
 %% set up display
@@ -125,7 +125,7 @@ for iBlock = 1:inputs.nblock
         % get samples
         if sess.eye_on
             [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
-            check_dist(x, y, inputs.scDim(1)/2, inputs.scDim(2)/2, r, lg_fid);
+            check_dist(x, y, xc, yc, r, lg_fid);
         end             
     end
     
