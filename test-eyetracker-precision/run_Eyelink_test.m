@@ -84,7 +84,7 @@ time.instruct_on = 5;
 if sess.eye_on
     el=initialise_eyes(w);
     sess.eyetrack = el;
-    sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));
+%    sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));
 end
 
 %% set up Eyetracker

@@ -32,9 +32,13 @@ KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 0);
 
+% set recording things
 sess.date = clock;
+sess.data_loc = '~/Documents/striwp1';
+session_data_loc = sess.data_loc;
+
 if debug
     sess.sub_num = 5;
     sess.session = 1;
@@ -61,6 +65,19 @@ rng(r_num);
 rngstate = rng;
 
 run_setup;
+
+%% Generate the folder for this session
+if sess.sub_num < 10
+    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+else
+    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+end
+if ~(exist(sub_dir))
+    mkdir(sub_dir);
+end
+addpath('JSONio/');
+
+%% start assigning things for saving
 task_str = 'learnGabors';
 json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
 
@@ -76,7 +93,7 @@ meta_data.display      = ' ';
 meta_data.display_dist = '57 cm';
 meta_data.resp_order   = sess.resp_order;
 
-if ~any(sess.resp_order)
+if sess.resp_order == 1
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
 else
     meta_data.resp_key      = 'clockwise: j, anticlockwise: f';

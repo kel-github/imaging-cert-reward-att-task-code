@@ -38,9 +38,12 @@ KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-% Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 0);
 
+sess.data_loc = '~/Documents/striwp1';
+session_data_loc = sess.data_loc;
 sess.date = clock;
+
 if debug
     sess.sub_num = 5;
     sess.session = 1;
@@ -69,6 +72,16 @@ rngstate = rng;
 
 run_setup;
 
+%% Generate the folder for this session (if doesn't exist)
+if sess.sub_num < 10
+    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+else
+    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+end
+if ~(exist(sub_dir))
+    mkdir(sub_dir);
+end
+
 %% Generate json metadata for this task and session
 addpath('JSONio/');
 task_str = 'learnCues'; 
@@ -84,7 +97,7 @@ meta_data.PC           = ' ';
 meta_data.display      = ' ';
 meta_data.display_dist = '57 cm';
 meta_data.resp_order   = sess.resp_order;
-if ~any(sess.resp_order)
+if sess.resp_order == 1
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
 else
     meta_data.resp_key      = 'clockwise: j, anticlockwise: f';

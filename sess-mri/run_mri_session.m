@@ -23,7 +23,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 0;
+debug = 1;
 
 % initialise mex files etc
 KbCheck;
@@ -157,7 +157,7 @@ elseif TR.TR > 1 && TR.TR ~= TRs(3)
     TR.nFeed = 1;
     TR.nFix = 1;
     time.pre_pulse_flip = .1; 
-elseif TR.TR == 1.9
+elseif TR.TR == 1.92
     TR.nVis = 1;
     TR.nResp = .65/1.9; % to give .85 seconds
     TR.nFeed = 1/1.9; % to give 1 second
@@ -187,7 +187,7 @@ ts.pulses = zeros(4, size(ts.fix_off, 2)); % collect the onset time of every pul
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Priority(topPriorityLevel);    
-run_pre_trials; % to pre-load all variables
+%run_pre_trials; % to pre-load all variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % show instructions for dummy scans
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,7 +195,11 @@ run_task_instructions(w, white, task);
 [ts.start_dummy] = Screen('Flip', w);
 
 newt = 0;
-pulse_time = waitPulse;
+if ~any(debug)
+    pulse_time = waitPulse;
+else
+    pulse_time = GetSecs;
+end
 for i = 1:5
     WaitSecs(TR.TR*.9);
     newt = pulse_time - newt;

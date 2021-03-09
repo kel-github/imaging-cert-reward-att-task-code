@@ -36,14 +36,19 @@ KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-% Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 1);
+
+% set recording things
+sess.date = clock;
+sess.data_loc = '~/Documents/striwp1';
+session_data_loc = sess.data_loc;
 
 sess.date = clock;
 if debug
     sess.sub_num = 5;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 1;
+    sess.skip_init_train = 0;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = input('Session? ');
@@ -65,6 +70,17 @@ rngstate = rng;
 
 run_setup;
 
+%% Generate the folder for this session - if doesn't exist
+if sess.sub_num < 10
+    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+else
+    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+end
+if ~(exist(sub_dir))
+    mkdir(sub_dir);
+end
+addpath('JSONio/');
+
 %% Generate json metadata for this task and session
 task_str = 'learnReward';
 json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
@@ -79,7 +95,7 @@ meta_data.PC           = ' ';
 meta_data.display      = ' ';
 meta_data.display_dist = '57 cm';
 meta_data.resp_order   = sess.resp_order;
-if ~any(sess.resp_order)
+if sess.resp_order == 1
     meta_data.resp_key      = 'clockwise: f, anticlockwise: j';
 else
     meta_data.resp_key      = 'clockwise: j, anticlockwise: f';
@@ -158,11 +174,15 @@ if ~any(sess.skip_init_train)
                 % now do informative set
                 tmp = ones(1, length(targets));
                 tmp = get_reward_order(tmp, targets, .2, 0);
+                   
             case 2
                 cCols = [sess.reward_colours(:,2), [sess.config.stim_dark, sess.config.stim_dark, sess.config.stim_dark]'];
                 tmp = zeros(1, length(targets)); 
                 tmp = get_reward_order(tmp, targets, .2, 1);
         end
+        
+        % run instruction trial here
+        run_incentive_value_instruction(w, learn_reward_order( count_reward ), cCols, sess);
         
         % concatenate trials and mix together to get full set
         order   = randperm(numel(targets));
@@ -266,6 +286,10 @@ for count_trials = 1:max(trials.trial_num)
     reward_cond = trials.reward_type(count_trials);
     
     switch reward_cond
+        % case 1: HtgtvHdst
+        % case 2: HtgtvLdst
+        % case 3: LtgtvLdst
+        % case 4: LtgtvHdst
         case 1
             % get the colour to be learned
             cCols = [sess.reward_colours(:,1), sess.reward_colours(:,1)];
