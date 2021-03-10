@@ -33,8 +33,10 @@ AssertOpenGL
 % Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
+sess.proj_loc = '~/Documents/striwp1';
+proj_loc = sess.proj_loc;
 if debug
-    sess.sub_num = 5; 
+    sess.sub_num = 8; 
     sess.session = 2;
     sess.run = 1;
     sess.eye_on  = 0;
@@ -65,6 +67,18 @@ rng(r_num);
 rngstate = rng;
 
 run_setup;
+
+%% Generate json metadata for this task and session
+addpath('JSONio');
+if sess.sub_num < 10
+    sub_dir = sprintf([proj_loc, '/', 'sub-0%d/ses-0%d/func'], sess.sub_num, sess.session);
+else
+    sub_dir = sprintf([proj_loc, '/', 'sub-%d/ses-0%d/func'], sess.sub_num, sess.session);
+end
+if ~(exist(sub_dir))
+    mkdir(sub_dir);
+end
+
 
 %% Generate json metadata for this task and session
 task_str = 'learnAtt';
@@ -276,13 +290,20 @@ for count_trials = 1:max(trials.trial_num)
     trial_count = trials.trial_num(count_trials);
     trial_type  = trials.probability(count_trials); % which trial type
     trial_cue   = trials.probability(count_trials);   
-    target_loc  = trials.position(count_trials) + 1;
-    ccw         = trials.ccw(count_trials);
+    target_loc  = trials.position(count_trials) + 1; % 1 = left, 2 = right
+    ccw         = trials.ccw(count_trials); % 0 or 1
     hrz         = trials.hrz(count_trials);
     reward      = trials.reward_trial(count_trials);
     reward_cond = trials.reward_type(count_trials);
     
     switch reward_cond
+        % CASES:
+        % case 1 = HtgtvHdst
+        % case 2 = HtgtvLdst
+        % case 3 = LtgtvLdst
+        % case 4 = LtgtHDst
+        % colour 1 = High
+        % colour 2 = Low
         case 1
             % get the colour to be learned
             cCols = [sess.reward_colours(:,1), sess.reward_colours(:,1)];

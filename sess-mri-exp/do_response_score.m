@@ -15,6 +15,8 @@ if any(key_is_down)
             first_press(task.responses(2)) > 0
         response.ccw = first_press(task.responses(2)) < ...
             first_press(task.responses(1)); % if counterclockwise occurred earlier than the clockwise response then put counterclockwise, if not put 1 for counterclockwise, if not put 0 for clockwise
+        % returns a 1 if response(1)[ccw] was pressed before
+        % response(2)[cw]
         ts.response(n) = min(first_press(task.responses)); % and put the time of the response that occurred first
     else
         response.ccw = first_press(task.responses(2)) > 0; % if the second response was pressed put a 1 for counterclockwise, if not a zero for clockwise

@@ -35,6 +35,9 @@ AssertOpenGL
 Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
+sess.proj_loc = '~/Documents/striwp1';
+proj_loc = sess.proj_loc;
+
 if debug
     sess.sub_num = 5;
     sess.session = 2;
@@ -61,6 +64,20 @@ rng(r_num);
 rngstate = rng;
 
 run_setup;
+
+
+%% Generate json metadata for this task and session
+addpath('JSONio');
+if sess.sub_num < 10
+    sub_dir = sprintf([proj_loc, '/', 'sub-0%d/ses-0%d/func'], sess.sub_num, sess.session);
+else
+    sub_dir = sprintf([proj_loc, '/', 'sub-%d/ses-0%d/func'], sess.sub_num, sess.session);
+end
+if ~(exist(sub_dir))
+    mkdir(sub_dir);
+end
+
+%% meta data stuff
 task_str = 'learnGabors';
 json_log_fname = generate_filename(['_ses-0%d_task-' task_str], sess, '.json');
 

@@ -39,17 +39,6 @@ sess.reward_bonus_low = reward.reward_bonus_low;
 % Angle of gabor target
 angle = 45;
 
-%% Generate json metadata for this task and session
-addpath('JSONio');
-proj_loc = '~/Documents/striwp1';
-if sess.sub_num < 10
-    sub_dir = sprintf([proj_loc, '/', 'sub-0%d/ses-0%d/func'], sess.sub_num, sess.session);
-else
-    sub_dir = sprintf([proj_loc, '/', 'sub-%d/ses-0%d/func'], sess.sub_num, sess.session);
-end
-if ~(exist(sub_dir))
-    mkdir(sub_dir);
-end
 
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));
@@ -93,10 +82,10 @@ Screen('TextSize', w, 35);
 KbName('UnifyKeyNames');
 keys = zeros(1,256);
 if sess.resp_order == 1
-    task.responses = KbName({'2@','3#'});
+    task.responses = KbName({'3#','2@'});
     keys(task.responses) = 1;
 elseif sess.resp_order == 2
-    task.responses = KbName({'3#','2@'});
+    task.responses = KbName({'2@','3#'});
     keys(task.responses) = 1;
 end
 KbQueueCreate(-1, keys);

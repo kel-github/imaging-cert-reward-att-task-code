@@ -45,7 +45,7 @@ session_data_loc = sess.data_loc;
 
 sess.date = clock;
 if debug
-    sess.sub_num = 5;
+    sess.sub_num = 8;
     sess.session = 1;
     sess.eye_on  = 0;
     sess.skip_init_train = 0;

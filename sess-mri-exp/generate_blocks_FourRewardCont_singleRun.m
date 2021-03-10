@@ -30,8 +30,8 @@ for iBlock = 1:tblocks
     
     probabilities  = [ repmat(1, 1, 36), repmat(2, 1, 36), repmat(3, 1, 28*2)];
     trial_position = [ repelem([0, 1], [28, 8]), repelem([1, 0], [28, 8]), repelem([0, 1], [28, 28]) ]; % but actually use 28 & 28 for last condition
-    reward_type    = [ repmat([ repelem([1, 2, 3, 4], 7), repelem([1, 2, 3, 4], 2)], 1, 2), repmat( repelem([1, 2, 3, 4], 7), 1, 2)];           
-   
+%    reward_type    = [ repmat([ repelem([1, 2, 3, 4], 7), repelem([1, 2, 3, 4], 2)], 1, 2), repmat( repelem([1, 2, 3, 4], 7), 1, 2)];           
+    reward_type    = [ repmat([ repelem([3, 4, 1, 2], 7), repelem([3, 4, 1, 2], 2)], 1, 2), repmat( repelem([3, 4, 1, 2], 7), 1, 2)];  
     % the (clunky code) below ensures that the unexpected rewards are distributed equally
     % across the invalid trial types over the 4 iterations of the
     % reward_type pattern. Basically, there are 2 iterations, the first two

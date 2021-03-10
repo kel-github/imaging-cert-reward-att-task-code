@@ -80,7 +80,7 @@ Screen('TextSize', w, 30);
 
 % Define responses and initiate kb queue
 keys = zeros(1,256);
-if sess.resp_order
+if sess.resp_order == 1
     task.responses = KbName({'j','f'});
     keys(task.responses) = 1;
 else
