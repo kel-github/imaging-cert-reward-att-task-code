@@ -32,7 +32,7 @@ KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 0);
 
 sess.date = clock;
 sess.proj_loc = '~/Documents/striwp1';
@@ -42,12 +42,12 @@ if debug
     sess.sub_num = 5;
     sess.session = 2;
     sess.eye_on  = 0;
-    sess.skip_init_train = 0;
+    sess.skip_init_train = 1;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = 2;
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
-    sess.skip_init_train = 0;
+    sess.skip_init_train = 1;
 end
 
 % time cheats
@@ -74,7 +74,7 @@ elseif sess.sub_num > 9 && sess.sub_num < 100
 else
     subref = '-%d';
 end
-sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
+sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
@@ -131,22 +131,22 @@ n_train_per_position = 4;
 contrast = [0.4, 0.4];
 
 %%%%%%%% MASKING INSTRUCTIONS HERE
-run_masking_instructions(w, gabor_rect, white, grey, 1, task);
+% run_masking_instructions(w, gabor_rect, white, grey, 1, task);
 
-for i = 1:numel(targets)
-    trial_count = trial_count + 1;
-    ci = targets(i);
-    Priority(topPriorityLevel);
-    [valid, response, ts] = do_trial(w, sess, task, -1, targets(i), ccw(i), ...
-        hrz(i), cols4cues, angle, contrast, 1, reward, 0, training);
-    Priority(0);
+% for i = 1:numel(targets)
+%     trial_count = trial_count + 1;
+%     ci = targets(i);
+%     Priority(topPriorityLevel);
+%     [valid, response, ts] = do_trial(w, sess, task, -1, targets(i), ccw(i), ...
+%         hrz(i), cols4cues, angle, contrast, 1, reward, 0, training);
+%     Priority(0);
+% 
+%     % print the output file
+%     fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, targets(i), 1, 1, ccw(i), response.correct, response.rt);
+%     start_ts = ts.end;
+% end
 
-    % print the output file
-    fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, targets(i), 1, 1, ccw(i), response.correct, response.rt);
-    start_ts = ts.end;
-end
-
-% now conduct tuning of luminance over two stages. Stage 1 (32 trials): run through a
+% conduct tuning of luminance over two stages. Stage 1 (32 trials): run through a
 % broad range of luminance values to hone in on a suggestion. In this
 % stage, both target and distractor are set to the same contrast on each
 % trial. Therefore, we ask the probability that the response to location x
@@ -181,7 +181,7 @@ q = [QuestCreate(contrast(1), guessSD, pThresh, bet, delt, gamm, grn, rng), ...
     
 
  % set break params   
-n_trials_between_breaks = 24;
+n_trials_between_breaks = 68;
     for i = 1:numel(targets)
         
         trial_count = trial_count + 1;
@@ -257,15 +257,9 @@ instructions = ...
     'Level 2 coming up!\n']);
 DrawFormattedText(w, instructions, 'Center', 'Center', white, 115);
 Screen('Flip', w);
-start_ts = KbWait;
+%start_ts = KbWait;
 WaitSecs(0.5);
 
-% %% Finalise
-if sess.eye_on == 1
-    Eyelink( 'StopRecording' );
-    Eyelink( 'CloseFile' );
-    Eyelink( 'ReceiveFile', upper(edfFile));
-end
     
 Screen('CloseAll');   
     

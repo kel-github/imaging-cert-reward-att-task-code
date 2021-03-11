@@ -10,5 +10,5 @@ function [] = take_break(wh, white, task)
     Screen('Flip', wh);
     %start_ts = KbWait;
 
-    WaitSecs(5);
+    WaitSecs(4);
 end

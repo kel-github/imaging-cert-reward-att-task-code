@@ -23,15 +23,14 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 1;
+debug = 0;
 
 % initialise mex files etc
 KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-Screen('Preference', 'SkipSyncTests', 0);
-PsychDebugWindowConfiguration;
+Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
 sess.proj_loc = '~/Documents/striwp1';
@@ -114,7 +113,7 @@ meta_data.matlabVersion = '2018b';
 meta_data.PTBVersion    = '3.0.15';
 
 
-if ~any(debug)
+% if ~any(debug)
     json_rd_fname = generate_filename('_ses-0%d_task-learnGabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
@@ -123,9 +122,9 @@ if ~any(debug)
     %meta_data.target_contrasts = sess.contrast;
     generate_meta_data_jsons(meta_data, sub_dir, json_log_fname); 
 
-else
-    meta_data.target_contrasts = [.2 .2];
-end
+% else
+%     meta_data.target_contrasts = [.2 .2];
+% end
 
 %% Start experiment
 if ~debug
