@@ -41,24 +41,12 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
             cue_colour = [[white white white]', [90, 90, 90]'];
     end
     
-    value_cue_colour = col_map;
+    value_cue_colour = col_map;    
     
-    
-    if sess.eye_on
-        eyetrack = sess.eyetrack;
-        % Start the eyetracker before each trial.
-        Eyelink('StartRecording');
-        Eyelink('Message', 'SYNCTIME');
-        % Time since tracker start.
-        eyetrack.start = Eyelink('TrackerTime');
-        % Difference between PC and tracker time.
-        eyetrack.offset = Eyelink('TimeOffset');
-        Eyelink('Message', 'TRIALID %d', trial.trial_num);
-        
-        % Send interest areas (you can do this offline too!)
-        Eyelink('Message', '!V IAREA RECTANGLE %d %d %d %d %d %s', 1, ...
-            fixation_eye_box(1), fixation_eye_box(2), ...
-            fixation_eye_box(3), fixation_eye_box(4), 'fix');
+    if sess.eye_on        
+       xc = sess.xc;
+       yc = sess.yc;
+       r = sess.r;        
     end
     
     % Draw the cue display.
@@ -67,9 +55,11 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]); % here cue colour is the same value x 2 to make a plain polygon
     [ts.cue(n)] = Screen('Flip', wh);
 %    do_trigger(trid, labjack, triggers.cue, ts.cue);
-    if sess.eye_on
-        Eyelink('Message', 'Cue');
-    end
+    if sess.eye_on % get eye gaze position
+        [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
+        check_dist(x, y, xc, yc, r, n, lg_fid);
+    end 
+    
     % draw the spatial cue display
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
@@ -79,9 +69,10 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     fprintf( event_fid, event_form, ts.cue(n), ts.spatial(n) - ts.cue(n), 'value cues' );
     
 %    do_trigger(trid, labjack, triggers.cue, ts.cue);
-    if sess.eye_on
-        Eyelink('Message', 'Cue');
-    end
+    if sess.eye_on % get eye gaze position
+        [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
+        check_dist(x, y, xc, yc, r, n, lg_fid);
+    end     
     
     % Hold with the fixation signal.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
@@ -92,9 +83,10 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     fprintf( event_fid, event_form, ts.spatial(n), ts.hold(n) - ts.spatial(n), 'spatial cue' );
     
 %    do_trigger(trid, labjack, triggers.hold, ts.hold);
-    if sess.eye_on
-        Eyelink('Message', 'Hold');
-    end    
+    if sess.eye_on % get eye gaze position
+        [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
+        check_dist(x, y, xc, yc, r, n, lg_fid);
+    end  
     
     % Draw the targets.
     %draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth);
@@ -115,11 +107,8 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     % write targets to event file
     fprintf( event_fid, event_form, ts.target(n), ts.mask(n) - ts.target(n), 'target' );
     %        do_trigger(trid, labjack, triggers.mask, ts.mask);
-    if sess.eye_on
-        Eyelink('Message', 'Mask');
-    end
     
-    % Fixation until response.
+    % Fixation 
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);

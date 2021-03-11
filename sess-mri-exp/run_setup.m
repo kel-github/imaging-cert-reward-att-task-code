@@ -63,6 +63,9 @@ Screen(w, 'Flip');
 [x_pix, y_pix] = Screen('WindowSize', w);
 xc = x_pix / 2;
 yc = y_pix / 2;
+sess.xc = xc;
+sess.xy = yc; 
+
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 ifi = Screen('GetFlipInterval', w); % timing control
 % Retrieve the maximum priority number
@@ -94,6 +97,7 @@ KbQueueCreate(-1, keys);
 session_hold_times = timing.session_hold_times;
 time.fixation = timing.fixation * expand_time;
 time.baseline = timing.baseline * expand_time;
+time.pre_vis_max = timing.pre_vis_max*expand_time;
 time.cue = session_hold_times{1}(1) * expand_time; % was 0.2
 time.spatial = session_hold_times{1}(2);
 time.hold = session_hold_times{1}(3) * expand_time; % was 0.1 - base time to hold the fix pre-tgts
@@ -104,40 +108,30 @@ time.reward = timing.reward * expand_time;
 time.abort = timing.abort * expand_time;
 sess.time = time;
 
-%% Setup eye tracking
-if sess.eye_on
-    EyelinkDoTrackerSetup(el);
-    sess.eyetrack = el;
-end
 
 %% Initialise Eyelink
 % NOTE - this references a Screen output (grey) and must happen after the
 % screens have been drawn
 if sess.eye_on
-    fixation_eye_box = CenterRectOnPointd([0 0 100 100], xc, yc);
-    el = EyelinkInitDefaults(w); % Initialization
-    if ~EyelinkInit(0) % Fail nice if you are going to fail
-        fprintf('Eyelink Init aborted.\n');
-        return;
-    end
-    [sess.eyelink_version, sess.eyelink_vstring] = ...
-        Eyelink('GetTrackerVersion');
-    
-    if sess.sub_num < 10
-         edf_file = generate_filename('_ses-%0d_task-learn-att-v1-gabors', sess, 'edf');
-    else
-         edf_file = generate_filename('_ses-%d_task-learn-att-v1-gabors', sess, 'edf');   
-    end
-    Eyelink('Openfile', edf_file); % Create and open your Eyelink File
-    % Set calibration type.
-    Eyelink('command', 'calibration_type = HV9'); %This is a typical 9 point calibration
-    Eyelink('command', 'saccade_velocity_threshold = 35'); %Default from Eyelink Demo
-    Eyelink('command', 'saccade_acceleration_threshold = 9500'); %Default from Eyelink Demo
-    % Set EDF file contents.
-    Eyelink('command', 'file_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON'); %Event data to collect
-    Eyelink('command', 'file_sample_data  = LEFT,RIGHT,GAZE,HREF,AREA,GAZERES,STATUS'); %Sample data to collect
-    el.backgroundcolour = grey;
-else
+    el=initialise_eyes(w);
+    sess.eyetrack = el;
+    sess.r = 100; % the fixation size box used to determine central fixation
+%    sess.elstatus = set_up_for_eyetracking(el, x_pix, y_pix, inputs.scDim(1), inputs.scDim(2), inputs.eyeDistmm(1), inputs.eyeDistmm(2));  
+else   
     sess.eyelink_version = -1;
     sess.eyelink_vstring = [];
 end
+
+%% set up Eyetracker
+if sess.eye_on
+    inputs.testid = sub_str;
+    inputs.bground = sess.config.grey;
+    EyelinkDoTrackerSetup(el); % calibrate
+    [sess, el, edf] = eyelink_initfile(el, sess, inputs); 
+    % set up log file
+    lg_fn = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_eyetracklog.tsv'], ...
+                      sess.sub_num, sess.session, sess.acq, sess.run);
+    lg_fid = fopen(fullfile( sub_dir, lg_fn ), 'w' );
+    fprintf(lg_fid, '%s\t%s\t%s\t%s\t%s\t%s\%d\n', 'x','y','xc','yc','r','rf', 't'); % eylink x, eyelink y, screen center x, screen center y, radius from center, radius flag (point outside radius>), trial
+end
+

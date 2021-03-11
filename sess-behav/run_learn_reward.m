@@ -45,14 +45,14 @@ session_data_loc = sess.data_loc;
 
 sess.date = clock;
 if debug
-    sess.sub_num = 8;
+    sess.sub_num = 54;
     sess.session = 1;
     sess.eye_on  = 0;
     sess.skip_init_train = 0;
 else
     sess.sub_num = input('Subject Number? ');
-    sess.session = input('Session? ');
-    sess.eye_on  = input('Eye tracker? (0 or 1)? ');
+    sess.session = 1;
+    sess.eye_on  = 0;
     sess.skip_init_train = 0;
     %sess.contrast = [0.07389999999999999,0.05];
 end
@@ -70,16 +70,21 @@ rngstate = rng;
 
 run_setup;
 
-%% Generate the folder for this session - if doesn't exist
+%% Generate the folder for this session
 if sess.sub_num < 10
-    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+    subref = '-00%d';
+elseif sess.sub_num > 9 && sess.sub_num < 100
+    subref = '-0%d';
 else
-    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+    subref = '-%d';
 end
+sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
+
 addpath('JSONio/');
+
 
 %% Generate json metadata for this task and session
 task_str = 'learnReward';
@@ -108,7 +113,7 @@ project_dir    = sub_dir;
 
 % get filename to read contrast params from initital session
 if ~any(debug)
-    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
+    json_rd_fname = generate_filename('_ses-0%d_task-learnGabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
     sess.contrast = meta_data.target_contrasts; % for use during the session
@@ -241,7 +246,7 @@ events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.j
 generate_event_data_jsons(sub_dir, events_json);
 
 sess.set_types = [1 1 1 1 1 1];
-trials = generate_blocks_FourRewardCont(2); % for 720 trials
+trials = generate_blocks_FourRewardCont(3); % for 1080 trials
 % save the trial table to a file so that we can get other parameters later
 % (such as block number, hrz)
 tbl_fname       = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.csv');

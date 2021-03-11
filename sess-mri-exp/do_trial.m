@@ -55,23 +55,28 @@ function [valid, response, ts] = ...
     
     value_cue_colour = col_map;
 
-    
-    if sess.eye_on
-        eyetrack = sess.eyetrack;
-        % Start the eyetracker before each trial.
-        Eyelink('StartRecording');
-        Eyelink('Message', 'SYNCTIME');
-        % Time since tracker start.
-        eyetrack.start = Eyelink('TrackerTime');
-        % Difference between PC and tracker time.
-        eyetrack.offset = Eyelink('TimeOffset');
-        Eyelink('Message', 'TRIALID %d', trial.trial_num);
-
-        % Send interest areas (you can do this offline too!)
-        Eyelink('Message', '!V IAREA RECTANGLE %d %d %d %d %d %s', 1, ...
-                fixation_eye_box(1), fixation_eye_box(2), ...
-                fixation_eye_box(3), fixation_eye_box(4), 'fix');
+    if sess.eye_on        
+       xc = sess.xc;
+       yc = sess.yc;
+       r = sess.r;        
     end
+    
+%     if sess.eye_on
+%         eyetrack = sess.eyetrack;
+%         % Start the eyetracker before each trial.
+%         Eyelink('StartRecording');
+%         Eyelink('Message', 'SYNCTIME');
+%         % Time since tracker start.
+%         eyetrack.start = Eyelink('TrackerTime');
+%         % Difference between PC and tracker time.
+%         eyetrack.offset = Eyelink('TimeOffset');
+%         Eyelink('Message', 'TRIALID %d', trial.trial_num);
+% 
+%         % Send interest areas (you can do this offline too!)
+%         Eyelink('Message', '!V IAREA RECTANGLE %d %d %d %d %d %s', 1, ...
+%                 fixation_eye_box(1), fixation_eye_box(2), ...
+%                 fixation_eye_box(3), fixation_eye_box(4), 'fix');
+%     end
 
 
     % Draw the fixation for baseline.
@@ -83,7 +88,8 @@ function [valid, response, ts] = ...
     [ts.baseline] = Screen('Flip', wh);
 %     do_trigger(trid, labjack, triggers.baseline, ts.baseline);
     if sess.eye_on
-        Eyelink('Message', 'Baseline');
+        [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
+        check_dist(x, y, xc, yc, r, lg_fid);
     end    
 
     % Draw the cue display.

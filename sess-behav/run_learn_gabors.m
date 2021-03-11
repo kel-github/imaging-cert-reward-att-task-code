@@ -40,14 +40,14 @@ sess.data_loc = '~/Documents/striwp1';
 session_data_loc = sess.data_loc;
 
 if debug
-    sess.sub_num = 5;
+    sess.sub_num = 54;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 0;
+    sess.skip_init_train = 1;
 else
     sess.sub_num = input('Subject Number? ');
-    sess.session = input('Session? ');
-    sess.eye_on  = input('Eye tracker? (0 or 1)? ');
+    sess.session = 1;
+    sess.eye_on  = 0;
     sess.skip_init_train = 0;
 end
 
@@ -68,13 +68,17 @@ run_setup;
 
 %% Generate the folder for this session
 if sess.sub_num < 10
-    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+    subref = '-00%d';
+elseif sess.sub_num > 9 && sess.sub_num < 100
+    subref = '-0%d';
 else
-    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+    subref = '-%d';
 end
+sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
+
 addpath('JSONio/');
 
 %% start assigning things for saving

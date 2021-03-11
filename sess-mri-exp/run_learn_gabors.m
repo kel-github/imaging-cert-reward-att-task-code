@@ -67,15 +67,20 @@ run_setup;
 
 
 %% Generate json metadata for this task and session
-addpath('JSONio');
 if sess.sub_num < 10
-    sub_dir = sprintf([proj_loc, '/', 'sub-0%d/ses-0%d/func'], sess.sub_num, sess.session);
+    subref = '-00%d';
+elseif sess.sub_num > 9 && sess.sub_num < 100
+    subref = '-0%d';
 else
-    sub_dir = sprintf([proj_loc, '/', 'sub-%d/ses-0%d/func'], sess.sub_num, sess.session);
+    subref = '-%d';
 end
+sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
+
+addpath('JSONio/');
+
 
 %% meta data stuff
 task_str = 'learnGabors';

@@ -31,7 +31,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 1;
+debug = 0;
 
 % initialise mex files etc
 KbCheck;
@@ -45,14 +45,14 @@ session_data_loc = sess.data_loc;
 sess.date = clock;
 
 if debug
-    sess.sub_num = 5;
+    sess.sub_num = 54;
     sess.session = 1;
     sess.eye_on  = 0;
     sess.skip_init_train = 1;
 else
     sess.sub_num = input('Subject Number? ');
-    sess.session = input('Session? ');
-    sess.eye_on  = input('Eye tracker? (0 or 1)? ');
+    sess.session = 1;
+    sess.eye_on  = 0;
     sess.skip_init_train = 0;
     %sess.contrast = [.0739, .05];
 end
@@ -72,15 +72,19 @@ rngstate = rng;
 
 run_setup;
 
-%% Generate the folder for this session (if doesn't exist)
+%% Generate the folder for this session
 if sess.sub_num < 10
-    sub_dir = [session_data_loc '/' sprintf('sub-0%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+    subref = '-00%d';
+elseif sess.sub_num > 9 && sess.sub_num < 100
+    subref = '-0%d';
 else
-    sub_dir = [session_data_loc '/' sprintf('sub-%d/ses-0%d', sess.sub_num, sess.session) '/behav'];
+    subref = '-%d';
 end
+sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
+
 
 %% Generate json metadata for this task and session
 addpath('JSONio/');
@@ -107,7 +111,7 @@ project_dir    = sub_dir;
  
 % get filename to read contrast params from initital session
 if ~any(debug)
-    json_rd_fname = generate_filename('_ses-0%d_task-learn-gabors', sess, '.json');
+    json_rd_fname = generate_filename('_ses-0%d_task-learnGabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
     sess.contrast = meta_data.target_contrasts; % for use during the session

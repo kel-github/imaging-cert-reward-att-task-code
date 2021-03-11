@@ -30,17 +30,18 @@ KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-% Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 0);
+PsychDebugWindowConfiguration;
 
 sess.date = clock;
 sess.proj_loc = '~/Documents/striwp1';
 proj_loc = sess.proj_loc;
 if debug
-    sess.sub_num = 8; 
+    sess.sub_num = 5; 
     sess.session = 2;
     sess.run = 1;
     sess.eye_on  = 0;
-    sess.TR = 1.92;
+    sess.TR = 1.51;
     sess.contrast = [.4, .4];
     reward_total = 0; % initiate reward total variable   
 else
@@ -48,7 +49,7 @@ else
     sess.session = input('Session? ');
     sess.run = input('Run? ');
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
-    sess.TR      = 1.92;
+    sess.TR      = 1.51; % or does it?!
     %sess.contrast = input('Contrasts? ');
     reward_total = input('Total Rewards? ');
 end
@@ -71,10 +72,13 @@ run_setup;
 %% Generate json metadata for this task and session
 addpath('JSONio');
 if sess.sub_num < 10
-    sub_dir = sprintf([proj_loc, '/', 'sub-0%d/ses-0%d/func'], sess.sub_num, sess.session);
+    subref = '-00%d';
+elseif sess.sub_num > 9 && sess.sub_num < 100
+    subref = '-0%d';
 else
-    sub_dir = sprintf([proj_loc, '/', 'sub-%d/ses-0%d/func'], sess.sub_num, sess.session);
+    subref = '-%d';
 end
+sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
@@ -83,7 +87,9 @@ end
 %% Generate json metadata for this task and session
 task_str = 'learnAtt';
 if sess.sub_num < 10
-    sub_str = '0%d';
+    sub_str = '-00%d';
+elseif sess.sub_num > 9 && sess.sub_num < 100
+    sub_str = '-0%d';
 else
     sub_str = '%d';
 end
@@ -185,6 +191,7 @@ events_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_
 event_fid = fopen(fullfile( sub_dir, events_fname ), 'w' );
 fprintf( event_fid, '%s\t%s\t%s\n','onset', 'duration', 'event');
 event_form = '%f\t%1.4f\t%s\n';
+
 % 1 last json here
 ets.onset = 'onset time';
 ets.duration = 'duration of event';
@@ -230,6 +237,7 @@ end
 
 % variables for collection time stamps
 ts.fix_off = zeros(1, size(trials, 1));
+ts.pre_vis = ts.fix_off;
 ts.cue = ts.fix_off;
 ts.spatial = ts.fix_off;
 ts.hold = ts.fix_off;
@@ -266,6 +274,19 @@ else
     pulse_time = GetSecs;
 end
 fprintf(event_fid, event_form, pulse_time, 0, 'pulse'); % 1
+
+if sess.eye_on
+    WaitSecs(0.1);
+    Eyelink('StartRecording');
+    WaitSecs(0.1);
+    
+    eye_used = Eyelink('EyeAvailable'); % Tracked eye - re-establish this after each calibration/recalibration
+    if eye_used == el.BINOCULAR % if both eyes are tracked
+        eye_used = el.LEFT_EYE; % use left eye
+    end    
+end
+
+% start dummy scans
 for i = 1:5
     WaitSecs(TR.TR*.9);
     %newt = pulse_time - newt;   
@@ -330,6 +351,11 @@ for count_trials = 1:max(trials.trial_num)
     ts.pulses(1, count_trials) = pulse_time;
     fprintf(event_fid, event_form, ts.pulses(1, count_trials), 0, 'pulse - start trial'); % 1st trial pulse, 2nd trial onwards = iti
     
+    pre_pause = time.pre_vis_max*rand;
+    ts.pre_vis(count_trials) = GetSecs;
+    
+    WaitSecs(pre_pause); % pre-cue display interval
+    
     [ts] = do_visual_events(w, count_trials, ts, sess, trial_cue, target_loc, ccw, hrz, cCols, ...
                             angle, contrast, 1, event_fid, event_form); % visual events have occurred
     % now draw fixation, but don't flip until the relevant time period has
@@ -350,18 +376,17 @@ for count_trials = 1:max(trials.trial_num)
     
     ts.resp_end(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nResp)-time.pre_pulse_flip); % flip should occur 10 ms before the end of the response period
 
-    % commenting out as not used in the TR 1.92 protocol
-%     if TR.TR < 1.9
-%         if ~any(debug)
-%             pulse_time = waitPulse;
-%         else
-%             pulse_time = GetSecs;
-%         end
-%     else
-%         pulse_time = GetSecs;
-%     end
-%     ts.pulses(3, count_trials) = pulse_time;
-%     fprintf(event_fid, event_form, ts.pulses(3, count_trials), 0, 'pulse - end resp'); % should be < 1.92
+    if TR.TR < 1.9
+        if ~any(debug)
+            pulse_time = waitPulse;
+        else
+            pulse_time = GetSecs;
+        end
+    else
+        pulse_time = GetSecs;
+    end
+    ts.pulses(3, count_trials) = pulse_time;
+    fprintf(event_fid, event_form, ts.pulses(3, count_trials), 0, 'pulse - end resp'); % should be < 1.92
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % SCORE AND GIVE FEEDBACK
@@ -416,11 +441,14 @@ WaitSecs(0.5);
 
 % %% Finalise
 if sess.eye_on == 1
+    fclose(lg_fid);
     Eyelink( 'StopRecording' );
     Eyelink( 'CloseFile' );
-    Eyelink( 'ReceiveFile', upper(edfFile));
+    Eyelink( 'ReceiveFile', upper(edf));
 end
-    
+ 
+% close log files
+fclose('all');
 Screen('CloseAll');   
 
 

@@ -10,6 +10,8 @@ function [out] = generate_filename(base, session, ext)
     subj = session.sub_num;
     sess = session.session;
     if subj < 10
+        subj_str = '00%d';
+    elseif subj > 9 && subj < 100
         subj_str = '0%d';
     else
         subj_str = '%d';
