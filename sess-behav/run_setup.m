@@ -45,7 +45,6 @@ angle = 45;
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));
 %PsychDebugWindowConfiguration;
-Screen('Preference','SkipSyncTests', 1); 
 white = WhiteIndex(screen_index);
 black = BlackIndex(screen_index);
 grey = white * 0.5;

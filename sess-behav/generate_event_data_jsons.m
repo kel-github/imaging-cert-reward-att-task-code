@@ -19,11 +19,12 @@ event_data.sess = 'session number';
 event_data.date = datetime;
 event_data.t = 'trial number';
 event_data.loc = '1=tgt left, 2=tgt right';
-event_data.cue = 'ptgtleft|cue, 1=.8, 2=.2,3=.5';
+event_data.cue = 'ptgtleft|cue, 1=.8,2=.2,3=.5';
+event_data.reward_conds = '1:hvh,2:hvl,3:lvl,4:lvh';
 event_data.co1 = 'contrast: left gabor';
 event_data.co2 = 'contrast: right gabor';
 event_data.or = '0=cw, 1=ccw';
-event_data.resp = '0=cw, 1=ccw';
+event_data.resp = '0=incorrect, 1=correct';
 event_data.rt = 'response time';
 event_data.rew_tot = 'if present: total reward accrued';
 
