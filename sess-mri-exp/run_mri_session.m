@@ -143,8 +143,8 @@ end
 trls_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls.tsv'], ...
                         sess.sub_num, sess.session, sess.acq, sess.run);
 trls_fid = fopen(fullfile( sub_dir, trls_fname), 'w');
-fprintf(trls_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot');
-trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\n';
+fprintf(trls_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot','left_col','right_col');
+trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\t%d\t%d\n';
 % insert one json generate here
 event_data.sub = 'subject number';
 event_data.sess = 'session number';
@@ -395,7 +395,7 @@ for count_trials = 1:max(trials.trial_num)
     % collect trial data, and draw fixation, ready to present at the end of the feedback period
     reward_total = reward_total + response.reward_value;
     % print the output
-    fprintf(trls_fid, trl_form, sess.sub_num, sess.session, trial_count, reward, target_loc, trial_cue, contrast(1), contrast(2), ccw, response.correct, response.rt, response.reward_value);
+    fprintf(trls_fid, trl_form, sess.sub_num, sess.session, trial_count, reward, target_loc, trial_cue, contrast(1), contrast(2), ccw, response.correct, response.rt, response.reward_value, cCols(1,1), cCols(1,2));
  
     ts.f_fix_on(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nFeed)-time.pre_pulse_flip);
     if ~any(debug)

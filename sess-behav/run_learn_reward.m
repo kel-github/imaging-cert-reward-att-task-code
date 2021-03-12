@@ -45,10 +45,10 @@ session_data_loc = sess.data_loc;
 
 sess.date = clock;
 if debug
-    sess.sub_num = 54;
+    sess.sub_num = 10;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 0;
+    sess.skip_init_train = 1;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = 1;
@@ -240,8 +240,8 @@ fclose(events_fid); % close the previous event file
 task_str = 'learnAttExp';
 events_fname = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.tsv');
 events_fid = fopen(fullfile(sub_dir, events_fname), 'w');
-fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot');
-trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\n';
+fprintf(events_fid, '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n', 'sub', 'sess', 't', 'rew', 'loc', 'cue', 'co1', 'co2', 'or', 'resp', 'rt', 'rew_tot','left_col','right_col');
+trl_form = '%d\t%d\t%d\t%d\t%d\t%d\t%.4f\t%.4f\t%d\t%d\t%.3f\t%d\t%d\t%d\n';
 events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.json');
 generate_event_data_jsons(sub_dir, events_json);
 
@@ -320,7 +320,7 @@ for count_trials = 1:max(trials.trial_num)
     reward_total = reward_total + response.reward_value;
 
     % print the output
-    fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, reward, target_loc, trial_cue, contrast(1), contrast(2), ccw, response.correct, response.rt, response.reward_value);
+    fprintf(events_fid, trl_form, sess.sub_num, sess.session, trial_count, reward, target_loc, trial_cue, contrast(1), contrast(2), ccw, response.correct, response.rt, response.reward_value, cCols(1,1), cCols(1,2));
     
     % take break?
     if ~any(mod(trial_count, n_trials_between_breaks))
