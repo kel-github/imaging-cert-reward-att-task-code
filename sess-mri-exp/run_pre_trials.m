@@ -57,7 +57,7 @@ for count_trials = 1:2
     % SCORE AND GIVE FEEDBACK
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
     [response, ts] = do_response_score(count_trials, task, ts, sess, reward, ccw, event_fid, event_form);
-    [ts] = animate_reward(w, count_trials, ts, sess, time, response, reward_total, event_fid, event_form);
+    [ts] = animate_reward(w, count_trials, ts, sess, time, response, reward, reward_total, event_fid, event_form);
     % collect trial data, and draw fixation, ready to present at the end of the feedback period
     reward_total = 0;
 

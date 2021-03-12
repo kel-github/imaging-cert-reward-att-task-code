@@ -391,13 +391,16 @@ for count_trials = 1:max(trials.trial_num)
     % SCORE AND GIVE FEEDBACK
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
     [response, ts] = do_response_score(count_trials, task, ts, sess, reward, ccw, event_fid, event_form);
-    [ts] = animate_reward(w, count_trials, ts, sess, time, response, reward_total, event_fid, event_form);
+    [ts] = animate_reward(w, count_trials, ts, sess, time, response, reward, reward_total, event_fid, event_form);
     % collect trial data, and draw fixation, ready to present at the end of the feedback period
     reward_total = reward_total + response.reward_value;
     % print the output
     fprintf(trls_fid, trl_form, sess.sub_num, sess.session, trial_count, reward, target_loc, trial_cue, contrast(1), contrast(2), ccw, response.correct, response.rt, response.reward_value, cCols(1,1), cCols(1,2));
- 
+    
+    % keep pedastals and stim on
+    do_fixation(w, sess);
     ts.f_fix_on(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nFeed)-time.pre_pulse_flip);
+    
     if ~any(debug)
         pulse_time = waitPulse;
     else

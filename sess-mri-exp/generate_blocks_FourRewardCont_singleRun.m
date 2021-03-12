@@ -39,18 +39,18 @@ for iBlock = 1:tblocks
     % next two rows are the distribution of reward conditions for the
     % invalid trials ( 8 ), this is then repeated for the right cue ( n =
     % 36 ) and the neutral cues are added onto the end ( 28 * 2 )
-    reward_on = [ repmat( repelem([ 0, 1 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
-                  repmat( repelem([ 0, 1 ], [ 2, 5 ] ), 1, 2 ), ... % hh, hl valid
-                  repelem( [ 0, 1 ], [ 3, 1 ] ), ...
-                  repelem( [ 0, 1 ], [ 1, 3 ] ), ...
-                  repmat( repelem([ 0, 1 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
-                  repmat( repelem([ 0, 1 ], [ 2, 5 ] ), 1, 2 ), ... % hh, hl valid;
-                  repelem( [ 0, 1, 0 ], [ 1, 1, 2 ] ), ...
-                  repelem( [ 1, 0, 1 ], [ 2, 1, 1 ] ), ...
-                  repmat( repelem([ 0, 1 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
-                  repmat( repelem([ 0, 1 ], [ 2, 5 ] ), 1, 2 ), ... % hh, hl valid;                 
-                  repmat( repelem([ 0, 1 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
-                  repmat( repelem([ 0, 1 ], [ 2, 5 ] ), 1, 2 )] ;              
+    reward_on = [ repmat( repelem([ 0, 9 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
+                  repmat( repelem([ 9, 1 ], [ 2, 5 ] ), 1, 2 ), ... % hh, hl valid
+                  repelem( [ 0, 9 ], [ 3, 1 ] ), ...
+                  repelem( [ 9, 1 ], [ 1, 3 ] ), ...
+                  repmat( repelem([ 0, 9 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
+                  repmat( repelem([ 9, 1 ], [ 2, 5 ] ), 1, 2 ), ... % hh, hl valid;
+                  repelem( [ 0, 9, 0 ], [ 1, 1, 2 ] ), ...
+                  repelem( [ 1, 9, 1 ], [ 2, 1, 1 ] ), ...
+                  repmat( repelem([ 0, 9 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
+                  repmat( repelem([ 9, 1 ], [ 2, 5 ] ), 1, 2 ), ... % hh, hl valid;                 
+                  repmat( repelem([ 0, 9 ], [ 5, 2 ] ), 1, 2 ), ... % ll, lh valid
+                  repmat( repelem([ 9, 1 ], [ 2, 5 ] ), 1, 2 )] ;              
 
     trial_ccw      = repmat( [ 0, 1], 1, numel( reward_type ) / numel( [ 0, 1 ] ) );
     trial_hrz      = repmat( [ 0, 0, 1, 1], 1, numel( reward_type ) / numel( [ 0, 0, 1, 1 ] ) );

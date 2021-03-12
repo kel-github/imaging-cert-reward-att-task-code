@@ -29,7 +29,7 @@ for iBlock = 1:tblocks
     trial_position = [ repelem([0, 1], [80, 20]), repelem([1, 0], [80, 20]), repelem([0, 1], [80, 80]) ];
     reward_id_idx  = 1:4;
     reward_type    = repmat(reward_id_idx, 1, numel(trial_position)/numel(reward_id_idx));
-    reward_on_idx  = [ repmat([ 1, 1, 0, 0], 1, 4), [0, 0, 1, 1] ];
+    reward_on_idx  = [ repmat([ 1, 1, 0, 0], 1, 4), [9, 9, 9, 9] ];
     reward_on      = repmat( reward_on_idx, 1, numel( reward_type ) / numel( reward_on_idx ) );      
     
     trial_ccw      = repmat( [ 0, 1], 1, numel( reward_type ) / numel( [ 0, 1 ] ) );

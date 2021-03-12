@@ -48,7 +48,7 @@ if debug
     sess.sub_num = 10;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 1;
+    sess.skip_init_train = 0;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = 1;
@@ -179,11 +179,13 @@ if ~any(sess.skip_init_train)
                 % now do informative set
                 tmp = ones(1, length(targets));
                 tmp = get_reward_order(tmp, targets, .2, 0);
+                tmp(tmp<max(tmp)) = 9;
                    
             case 2
                 cCols = [sess.reward_colours(:,2), [sess.config.stim_dark, sess.config.stim_dark, sess.config.stim_dark]'];
                 tmp = zeros(1, length(targets)); 
                 tmp = get_reward_order(tmp, targets, .2, 1);
+                tmp(tmp>min(tmp)) = 9;
         end
         
         % run instruction trial here

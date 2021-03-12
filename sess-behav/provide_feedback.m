@@ -1,4 +1,4 @@
-function [ts] = provide_feedbaack(wh, sess, response, condition)
+function [ts] = provide_feedback(wh, sess, response, condition)
 
 % if condition = 2, then provide noninformative feedback,
 % if condition = 1, then provide informative feedback,

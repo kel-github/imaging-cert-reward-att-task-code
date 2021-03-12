@@ -43,6 +43,8 @@ if any(key_is_down)
                     round(sess.reward_base + sess.reward_bonus * reward_frac);
             case 2
                 response.reward_value = 0;
+            case 9
+                response.reward_value = 0;
         end
     else
         response.reward_value = 0;

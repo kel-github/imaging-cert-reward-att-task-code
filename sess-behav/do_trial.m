@@ -21,7 +21,7 @@ function [valid, response, ts] = ...
     % obtained from staircasing
     % glb_alph       = global alpha for masks: goes from 0 (transparent) to 1
     % (opaque)
-    % reward         = reward case, 0 = low reward, 1 = high reward, 2 = none
+    % reward         = reward case, 0 = low reward, 1 = high reward, 9 = none
     % current_reward = current accrued reward value 
     % train          = provide reward, or initital learning feedback? 0 for
     % reward, 1 for initial learning, 2 for uninformative
@@ -217,6 +217,8 @@ function [valid, response, ts] = ...
                         round(sess.reward_base + sess.reward_bonus * reward_frac);
                 case 2
                     response.reward_value = 0;
+                case 9
+                    response.reward_value = 0;
             end 
         else
             response.reward_value = 0;
@@ -227,8 +229,16 @@ function [valid, response, ts] = ...
             Eyelink('Message', 'Reward');
         end
         if ~any(train)
-            [ts.reward] = animate_reward(wh, sess, response, current_reward);
-        else
+            if reward == 9
+               % Fixation instead of reward
+                draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+                draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
+                draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
+                [ts.reward] = Screen('Flip', wh);
+            else
+                [ts.reward] = animate_reward(wh, sess, response, current_reward);
+            end
+        else 
             [ts.reward] = provide_feedback(wh, sess, response, train);
         end
 %        do_trigger(trid, labjack, triggers.reward, ts.reward);

@@ -1,4 +1,4 @@
-function [ts] = animate_reward(wh, n, ts, sess, time, response, current_reward, event_fid, event_form)
+function [ts] = animate_reward(wh, n, ts, sess, time, response, reward, current_reward, event_fid, event_form)
     % inputs
     % --------------------------------------------------------------
     % wh = window handle
@@ -29,9 +29,11 @@ function [ts] = animate_reward(wh, n, ts, sess, time, response, current_reward, 
     else
         reward_text = sprintf('%05d', current_reward);
 
-    end
-    DrawFormattedText(wh, reward_text, 'Center', 'Center', ...
-                      colour, 115);
+   end
+   if reward < 9
+       DrawFormattedText(wh, reward_text, 'Center', 'Center', ...
+           colour, 115);
+   end
     [ts.feed_on(n)] = Screen('Flip', wh);
     WaitSecs(1);
     
