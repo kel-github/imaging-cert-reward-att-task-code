@@ -78,7 +78,7 @@ elseif sess.sub_num > 9 && sess.sub_num < 100
 else
     subref = '-%d';
 end
-sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
+sub_dir = [session_data_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/beh'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end

@@ -23,7 +23,7 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 0;
+debug = 1;
 
 % initialise mex files etc
 KbCheck;
@@ -36,7 +36,7 @@ sess.date = clock;
 sess.proj_loc = '~/Documents/striwp1';
 proj_loc = sess.proj_loc;
 if debug
-    sess.sub_num = 5; 
+    sess.sub_num = 10; 
     sess.session = 2;
     sess.run = 1;
     sess.eye_on  = 0;
@@ -77,7 +77,7 @@ elseif sess.sub_num > 9 && sess.sub_num < 100
 else
     subref = '-%d';
 end
-sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
+sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/beh'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
@@ -86,9 +86,9 @@ end
 %% Generate json metadata for this task and session
 task_str = 'learnAtt';
 if sess.sub_num < 10
-    sub_str = '-00%d';
+    sub_str = '00%d';
 elseif sess.sub_num > 9 && sess.sub_num < 100
-    sub_str = '-0%d';
+    sub_str = '0%d';
 else
     sub_str = '%d';
 end
@@ -113,7 +113,7 @@ meta_data.matlabVersion = '2018b';
 meta_data.PTBVersion    = '3.0.15';
 
 
-% if ~any(debug)
+if ~any(debug)
     json_rd_fname = generate_filename('_ses-0%d_task-learnGabors', sess, '.json');
     tmp = jsonread(fullfile(sub_dir, json_rd_fname));
     meta_data.target_contrasts = tmp.target_contrasts;
@@ -122,9 +122,9 @@ meta_data.PTBVersion    = '3.0.15';
     %meta_data.target_contrasts = sess.contrast;
     generate_meta_data_jsons(meta_data, sub_dir, json_log_fname); 
 
-% else
-%     meta_data.target_contrasts = [.2 .2];
-% end
+else
+    meta_data.target_contrasts = [.2 .2];
+end
 
 %% Start experiment
 if ~debug

@@ -32,14 +32,14 @@ KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-Screen('Preference', 'SkipSyncTests', 0);
+Screen('Preference', 'SkipSyncTests', 1);
 
 sess.date = clock;
 sess.proj_loc = '~/Documents/striwp1';
 proj_loc = sess.proj_loc;
 
 if debug
-    sess.sub_num = 5;
+    sess.sub_num = 10;
     sess.session = 2;
     sess.eye_on  = 0;
     sess.skip_init_train = 1;
@@ -74,7 +74,7 @@ elseif sess.sub_num > 9 && sess.sub_num < 100
 else
     subref = '-%d';
 end
-sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/behav'];
+sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/beh'];
 if ~(exist(sub_dir))
     mkdir(sub_dir);
 end
@@ -127,7 +127,7 @@ reward       = 2; % no rewards available
 cols4cues = repmat([sess.config.stim_dark, sess.config.stim_dark, sess.config.stim_dark]', 1, 2);
 training = 2;
 n_train_per_position = 4;
-[targets, ccw, hrz] = generate_trial_block_params(n_train_per_position, n_positions);
+%[targets, ccw, hrz] = generate_trial_block_params(n_train_per_position, n_positions);
 contrast = [0.4, 0.4];
 
 %%%%%%%% MASKING INSTRUCTIONS HERE
