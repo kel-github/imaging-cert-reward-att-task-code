@@ -17,7 +17,7 @@ function [] = draw_targets( wh, gabor_id, gabor_rect, target, shift, hz, ...
     tilt = [0, 0];
     target_right = mod(target-1, 2);
 
-    if target_right % KG to check that this flips the vertical stimulus on its axis and not the horizontal (i.e. does hz = 1 mean verticle?)
+    if target_right 
         tilt(1) = hz * 90;
         tilt(2) = shift + 180;
     else

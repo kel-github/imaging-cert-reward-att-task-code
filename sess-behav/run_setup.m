@@ -57,7 +57,7 @@ sess.config.stim_dark = stim_dark;
 sess.config.stim_light = stim_light;
 sess.config.reward_colour = [255, 215, 0];
 
-[w, rect] = Screen('OpenWindow', screen_index, grey, [], [], [], 0, 8);
+[w, rect] = Screen('OpenWindow', screen_index, sess.config.black, [], [], [], 0, 8);
 Screen(w, 'Flip');
 [x_pix, y_pix] = Screen('WindowSize', w);
 xc = x_pix / 2;
