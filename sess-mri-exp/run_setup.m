@@ -5,8 +5,7 @@ resolution = [1600 1200]; %
 
 %% Parameters
 load('counterBalance_task_learn_att')
-colours = [182, 133, 58; 230 93 85]';
-
+colours = [148 131 165;  226 90 121]';
 sess.cbalance = p_counterbalance(:, sess.sub_num);
 
 % assign reward colours ([1, 2] or [2, 1]) - colour value mapping (1 = high
@@ -55,7 +54,7 @@ sess.config.stim_dark = stim_dark;
 sess.config.stim_light = stim_light;
 sess.config.reward_colour = [255, 215, 0];
 
-[w, rect] = Screen('OpenWindow', screen_index, grey, [], [], [], 0, 8);
+[w, rect] = Screen('OpenWindow', screen_index, sess.config.black, [], [], [], 0, 8);
 %[w, rect] = Screen('OpenWindow', screen_index, black, [], [], [], 0, 8);
 Screen(w, 'Flip');
 
@@ -64,7 +63,6 @@ xc = x_pix / 2;
 yc = y_pix / 2;
 sess.xc = xc;
 sess.xy = yc; 
-
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 ifi = Screen('GetFlipInterval', w); % timing control
 % Retrieve the maximum priority number
@@ -124,7 +122,7 @@ end
 %% set up Eyetracker
 if sess.eye_on
     inputs.testid = sub_str;
-    inputs.bground = sess.config.grey;
+    inputs.bground = sess.config.black;
     EyelinkDoTrackerSetup(el); % calibrate
     [sess, el, edf] = eyelink_initfile(el, sess, inputs); 
     % set up log file

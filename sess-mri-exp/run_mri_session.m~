@@ -237,7 +237,6 @@ end
 % variables for collection time stamps
 ts.fix_off = zeros(1, size(trials, 1));
 ts.pre_vis = ts.fix_off;
-ts.end_pre_vis = ts.fix_off;
 ts.cue = ts.fix_off;
 ts.spatial = ts.fix_off;
 ts.hold = ts.fix_off;
@@ -352,10 +351,11 @@ for count_trials = 1:max(trials.trial_num)
     fprintf(event_fid, event_form, ts.pulses(1, count_trials), 0, 'pulse - start trial'); % 1st trial pulse, 2nd trial onwards = iti
     
     do_fixation(w, sess);
-    ts.pre_vis(count_trials) = Screen('Flip', w);
+    
     pre_pause = time.pre_vis_max*rand;
-    WaitSecs(pre_pause);
-    %ts.end_pre_vis(count_trials) = Screen('Flip', w, ts.pre_vis(count_trials)+pre_pause);
+    ts.pre_vis(count_trials) = GetSecs;
+    
+    WaitSecs(pre_pause); % pre-cue display interval
     
     [ts] = do_visual_events(w, count_trials, ts, sess, trial_cue, target_loc, ccw, hrz, cCols, ...
                             angle, contrast, 1, event_fid, event_form); % visual events have occurred
@@ -373,7 +373,8 @@ for count_trials = 1:max(trials.trial_num)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % RESPONSE PERIOD
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-    do_fix_full(w, sess, cCols, 1);    
+    do_fix_full(w, sess, cCols, 1);
+    
     ts.resp_end(count_trials) = Screen('Flip', w, pulse_time+(TR.TR*TR.nResp)-time.pre_pulse_flip); % flip should occur 10 ms before the end of the response period
 
     if TR.TR < 1.9

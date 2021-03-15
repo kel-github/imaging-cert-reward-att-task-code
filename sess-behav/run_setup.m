@@ -5,8 +5,8 @@ resolution = [1024 768]; % might change this with psychtoolbox - get stuff
 
 %% Parameters
 load('counterBalance_task_learn_att')
-colours = [182, 133, 58; 230 93 85]';
-
+%colours = [182, 133, 58; 230 93 85]';
+colours = [148 131 165;  226 90 121]'; %230 93 85]'; %[182, 133, 58]-5; 226 90 121]; 
 sess.cbalance = p_counterbalance(:, sess.sub_num);
 
 % assign reward colours ([1, 2] or [2, 1]) - colour value mapping (1 = high

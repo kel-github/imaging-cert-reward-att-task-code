@@ -1,4 +1,4 @@
-function [valid, response, ts] = ...
+ function [valid, response, ts] = ...
     do_trial(wh, sess, task, cue, target, ccw, hrz, col_map, ...
              shift, contrast, glb_alph, reward, current_reward, train)
    
@@ -21,7 +21,7 @@ function [valid, response, ts] = ...
     % obtained from staircasing
     % glb_alph       = global alpha for masks: goes from 0 (transparent) to 1
     % (opaque)
-    % reward         = reward case, 0 = low reward, 1 = high reward, 2 = none
+    % reward         = reward case, 0 = low reward, 1 = high reward, 9 = none
     % current_reward = current accrued reward value 
     % train          = provide reward, or initital learning feedback? 0 for
     % reward, 1 for initial learning, 2 for uninformative
@@ -42,7 +42,7 @@ function [valid, response, ts] = ...
     gabor_id = sess.config.gabor_id;
     gabor_rect = sess.config.gabor_rect;
     
-    vc_pwidth = 100; % pen width of value cues
+    vc_pwidth = 80; % pen width of value cues
     
     switch cue
         case -1
@@ -55,28 +55,23 @@ function [valid, response, ts] = ...
     
     value_cue_colour = col_map;
 
-    if sess.eye_on        
-       xc = sess.xc;
-       yc = sess.yc;
-       r = sess.r;        
-    end
     
-%     if sess.eye_on
-%         eyetrack = sess.eyetrack;
-%         % Start the eyetracker before each trial.
-%         Eyelink('StartRecording');
-%         Eyelink('Message', 'SYNCTIME');
-%         % Time since tracker start.
-%         eyetrack.start = Eyelink('TrackerTime');
-%         % Difference between PC and tracker time.
-%         eyetrack.offset = Eyelink('TimeOffset');
-%         Eyelink('Message', 'TRIALID %d', trial.trial_num);
-% 
-%         % Send interest areas (you can do this offline too!)
-%         Eyelink('Message', '!V IAREA RECTANGLE %d %d %d %d %d %s', 1, ...
-%                 fixation_eye_box(1), fixation_eye_box(2), ...
-%                 fixation_eye_box(3), fixation_eye_box(4), 'fix');
-%     end
+    if sess.eye_on
+        eyetrack = sess.eyetrack;
+        % Start the eyetracker before each trial.
+        Eyelink('StartRecording');
+        Eyelink('Message', 'SYNCTIME');
+        % Time since tracker start.
+        eyetrack.start = Eyelink('TrackerTime');
+        % Difference between PC and tracker time.
+        eyetrack.offset = Eyelink('TimeOffset');
+        Eyelink('Message', 'TRIALID %d', trial.trial_num);
+
+        % Send interest areas (you can do this offline too!)
+        Eyelink('Message', '!V IAREA RECTANGLE %d %d %d %d %d %s', 1, ...
+                fixation_eye_box(1), fixation_eye_box(2), ...
+                fixation_eye_box(3), fixation_eye_box(4), 'fix');
+    end
 
 
     % Draw the fixation for baseline.
@@ -85,15 +80,19 @@ function [valid, response, ts] = ...
     draw_stim(wh, 1, [[white, white, white]',[white, white, white]']);
     end
     draw_stim(wh, 0, stim_dark);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+    draw_value_cues(wh, 1:2, stim_dark, vc_pwidth, gabor_rect);
+    
     [ts.baseline] = Screen('Flip', wh);
 %     do_trigger(trid, labjack, triggers.baseline, ts.baseline);
     if sess.eye_on
-        [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
-        check_dist(x, y, xc, yc, r, lg_fid);
+        Eyelink('Message', 'Baseline');
     end    
 
     % Draw the cue display.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]); % here cue colour is the same value x 2 to make a plain polygon
     [ts.cue] = Screen('Flip', wh, ts.baseline+time.baseline);
@@ -104,6 +103,7 @@ function [valid, response, ts] = ...
     
     % draw the spatial cue display
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, cue_colour); 
     [ts.spatial] = Screen('Flip', wh, ts.cue+time.cue);
@@ -114,6 +114,7 @@ function [valid, response, ts] = ...
     
     % Hold with the fixation signal.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     [ts.hold] = Screen('Flip', wh, ts.spatial+time.spatial);
@@ -127,8 +128,10 @@ function [valid, response, ts] = ...
     draw_targets(wh, gabor_id, gabor_rect, target, (-1)^(~ccw)*shift, ...
                  hrz, contrast);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
 
+    
     KbQueueFlush;
     KbQueueStart; % start keyboard check queue
     hold_time = time.hold + rand*time.hold_v;
@@ -170,7 +173,9 @@ function [valid, response, ts] = ...
         % Mask the targets.
         draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
         draw_masks(wh, gabor_rect, 0.4*get_ppd(), white, grey, glb_alph);
+        draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
         draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
+     
         [ts.mask] = Screen('Flip', wh, ts.target+time.target);
 %        do_trigger(trid, labjack, triggers.mask, ts.mask);
         if sess.eye_on
@@ -179,6 +184,8 @@ function [valid, response, ts] = ...
 
         % Fixation until response.
         draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+        %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
+        draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
         draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
         draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
         [ts.pending] = Screen('Flip', wh, ts.mask+time.mask);
@@ -223,6 +230,8 @@ function [valid, response, ts] = ...
                         round(sess.reward_base + sess.reward_bonus * reward_frac);
                 case 2
                     response.reward_value = 0;
+                case 9
+                    response.reward_value = 0;
             end 
         else
             response.reward_value = 0;
@@ -233,14 +242,27 @@ function [valid, response, ts] = ...
             Eyelink('Message', 'Reward');
         end
         if ~any(train)
-            [ts.reward] = animate_reward(wh, sess, response, current_reward);
-        else
+            if reward == 9
+               % Fixation instead of reward
+                draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+                %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
+                draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+                draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
+                draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
+                [ts.reward] = Screen('Flip', wh);
+            else
+                [ts.reward] = animate_reward(wh, sess, response, current_reward);
+            end
+        else 
             [ts.reward] = provide_feedback(wh, sess, response, train);
         end
 %        do_trigger(trid, labjack, triggers.reward, ts.reward);
         
         % Display fixation.
         draw_pedestals(wh, 1:2, gabor_rect, 0.5*get_ppd(), white, grey);
+        draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+        draw_value_cues(wh, 1:2, stim_dark, vc_pwidth, gabor_rect);
+        %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
         draw_stim(wh, 0, stim_dark);
         ts.end = Screen('Flip', wh, ts.reward+time.reward);
     else

@@ -26,6 +26,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     time = sess.time; % timing parameters
     white = sess.config.stim_light;
     grey = sess.config.grey;
+    black = sess.config.black;
     stim_dark = sess.config.stim_dark;
     gabor_id = sess.config.gabor_id;
     gabor_rect = sess.config.gabor_rect;
@@ -51,6 +52,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     
     % Draw the cue display.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]); % here cue colour is the same value x 2 to make a plain polygon
     [ts.cue(n)] = Screen('Flip', wh);
@@ -62,6 +64,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     
     % draw the spatial cue display
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);   
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, cue_colour); 
     [ts.spatial(n)] = Screen('Flip', wh, ts.cue(n)+time.cue);
@@ -76,6 +79,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     
     % Hold with the fixation signal.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     [ts.hold(n)] = Screen('Flip', wh, ts.spatial(n)+time.spatial);
@@ -92,6 +96,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     %draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth);
     draw_targets(wh, gabor_id, gabor_rect, target, (-1)^(~ccw)*shift, ...
                  hrz, contrast);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);           
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect); 
     KbQueueFlush;
@@ -100,9 +105,10 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     [ts.target(n)] = Screen('Flip', wh, ts.hold(n)+hold_time);
     
     % Mask the masks.
-    draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     draw_masks(wh, gabor_rect, 0.4*get_ppd(), white, grey, glb_alph);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
+    draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);    
     [ts.mask(n)] = Screen('Flip', wh, ts.target(n)+time.target);
     % write targets to event file
     fprintf( event_fid, event_form, ts.target(n), ts.mask(n) - ts.target(n), 'target' );
@@ -110,6 +116,7 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     
     % Fixation 
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     [ts.pending(n)] = Screen('Flip', wh, ts.mask(n)+time.mask);    

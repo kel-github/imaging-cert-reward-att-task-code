@@ -31,14 +31,14 @@ clear mex
 
 % debug just automatically assigns some subject numbers/starting parameters, and results in the
 % cursor not being hidden
-debug = 0;
+debug = 1;
 
 % initialise mex files etc
 KbCheck;
 KbName('UnifyKeyNames');
 GetSecs;
 AssertOpenGL
-Screen('Preference', 'SkipSyncTests', 0);
+Screen('Preference', 'SkipSyncTests', 1);
 
 sess.data_loc = '~/Documents/striwp1';
 session_data_loc = sess.data_loc;

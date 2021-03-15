@@ -15,6 +15,9 @@ function [ts] = animate_reward(wh, n, ts, sess, time, response, reward, current_
     white = sess.config.white;
     stim_dark = sess.config.stim_dark;
     grey = sess.config.grey;
+    black = sess.config.black;
+    
+    vc_pwidth = 80;
     
     if response.correct
         colour = sess.config.reward_colour;
@@ -58,6 +61,8 @@ function [ts] = animate_reward(wh, n, ts, sess, time, response, reward, current_
     
     % Display fixation.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5*get_ppd(), white, grey);
+    draw_borders(wh, 1:2, black, vc_pwidth, gabor_rect);
+    draw_value_cues(wh, 1:2, stim_dark, vc_pwidth, gabor_rect);
     draw_stim(wh, 0, stim_dark);
     ts.fix_on(n) = Screen('Flip', wh, ts.feed_on(n)+time.reward);
     fprintf( event_fid, event_form, ts.feed_on(n), ts.fix_on(n) - ts.feed_on(n), 'feedback' );

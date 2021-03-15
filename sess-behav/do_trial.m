@@ -1,4 +1,4 @@
-function [valid, response, ts] = ...
+ function [valid, response, ts] = ...
     do_trial(wh, sess, task, cue, target, ccw, hrz, col_map, ...
              shift, contrast, glb_alph, reward, current_reward, train)
    
@@ -80,8 +80,9 @@ function [valid, response, ts] = ...
     draw_stim(wh, 1, [[white, white, white]',[white, white, white]']);
     end
     draw_stim(wh, 0, stim_dark);
-    draw_value_cues(wh, 1:2, stim_dark, vc_pwidth, gabor_rect);
     draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+    draw_value_cues(wh, 1:2, stim_dark, vc_pwidth, gabor_rect);
+    
     [ts.baseline] = Screen('Flip', wh);
 %     do_trigger(trid, labjack, triggers.baseline, ts.baseline);
     if sess.eye_on
@@ -91,8 +92,8 @@ function [valid, response, ts] = ...
     % Draw the cue display.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
     %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
-    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]); % here cue colour is the same value x 2 to make a plain polygon
     [ts.cue] = Screen('Flip', wh, ts.baseline+time.baseline);
 %    do_trigger(trid, labjack, triggers.cue, ts.cue);
@@ -102,9 +103,8 @@ function [valid, response, ts] = ...
     
     % draw the spatial cue display
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
-    %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
-    draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+    draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, cue_colour); 
     [ts.spatial] = Screen('Flip', wh, ts.cue+time.cue);
 %    do_trigger(trid, labjack, triggers.cue, ts.cue);
@@ -114,9 +114,8 @@ function [valid, response, ts] = ...
     
     % Hold with the fixation signal.
     draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
-    %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
-    draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+    draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
     [ts.hold] = Screen('Flip', wh, ts.spatial+time.spatial);
 %    do_trigger(trid, labjack, triggers.hold, ts.hold);
@@ -129,8 +128,9 @@ function [valid, response, ts] = ...
     draw_targets(wh, gabor_id, gabor_rect, target, (-1)^(~ccw)*shift, ...
                  hrz, contrast);
     draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
+    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);    
     draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
-    draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+
     
     KbQueueFlush;
     KbQueueStart; % start keyboard check queue
@@ -173,8 +173,9 @@ function [valid, response, ts] = ...
         % Mask the targets.
         draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
         draw_masks(wh, gabor_rect, 0.4*get_ppd(), white, grey, glb_alph);
+        draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
         draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
-        draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);     
+     
         [ts.mask] = Screen('Flip', wh, ts.target+time.target);
 %        do_trigger(trid, labjack, triggers.mask, ts.mask);
         if sess.eye_on
@@ -184,8 +185,8 @@ function [valid, response, ts] = ...
         % Fixation until response.
         draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
         %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
-        draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
         draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+        draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
         draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
         [ts.pending] = Screen('Flip', wh, ts.mask+time.mask);
         if sess.eye_on
@@ -245,8 +246,8 @@ function [valid, response, ts] = ...
                % Fixation instead of reward
                 draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, grey);
                 %draw_pedestals(wh, 1:2, gabor_rect, 0.5 * get_ppd(), white, black);
-                draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
                 draw_borders(wh, 1:2, [black black black], vc_pwidth, gabor_rect);
+                draw_value_cues(wh, 1:2, value_cue_colour, vc_pwidth, gabor_rect);
                 draw_stim(wh, cue, [cue_colour(:,1) cue_colour(:,1)]);
                 [ts.reward] = Screen('Flip', wh);
             else

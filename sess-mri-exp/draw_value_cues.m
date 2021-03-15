@@ -10,5 +10,5 @@ function[] = draw_value_cues(wh, positions, colors, wdth, tgt_rect)
     xy_pos = get_positions(wh, positions);
     xy_diff = repmat([radius; radius], 1, size(positions, 2));
     rects = [xy_pos - xy_diff; xy_pos + xy_diff];
-    Screen('FrameOval', wh, colors, rects, wdth);
+    Screen('FrameOval', wh, colors, rects, wdth*.75, wdth*.75);
 end

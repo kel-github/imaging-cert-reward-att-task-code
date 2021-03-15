@@ -1,5 +1,6 @@
 function [] = run_newbie_instructions(wh, gabor_id, gabor_rect, white, grey, task)    
-
+    
+    vc_pwidth = 20; % pen width of value cues
     Screen('TextStyle', wh, 1);
     Screen('TextSize', wh, 30); 
     instructions = ...
@@ -12,6 +13,7 @@ function [] = run_newbie_instructions(wh, gabor_id, gabor_rect, white, grey, tas
     start_ts = KbWait;
     WaitSecs(0.5);
     draw_targets(wh, gabor_id, gabor_rect, 1, 45, 0, 1.0);
+    draw_borders(wh, 1:2, [0,0,0], vc_pwidth, gabor_rect);
     Screen('Flip', wh);
     start_ts = KbWait;
     WaitSecs(0.5);
@@ -27,8 +29,9 @@ function [] = run_newbie_instructions(wh, gabor_id, gabor_rect, white, grey, tas
     instructions = ...
         sprintf(['Here the target on the right is rotated clockwise.\n']);
     DrawFormattedText(wh, instructions, 'Center', 'Center', white, 115);
-    draw_targets(wh, gabor_id, gabor_rect, 2, -45, 1, 1.0);
+    draw_targets(wh, gabor_id, gabor_rect, 2, -45, 1, 1.0);   
     draw_placeholders(wh, 2, white);
+    draw_borders(wh, 1:2, [0,0,0], vc_pwidth, gabor_rect); 
     Screen('Flip', wh);
     start_ts = KbWait;
     WaitSecs(0.5);
