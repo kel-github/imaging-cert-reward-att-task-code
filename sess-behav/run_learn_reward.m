@@ -48,7 +48,7 @@ if debug
     sess.sub_num = 10;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 1;
+    sess.skip_init_train = 0;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = 1;
