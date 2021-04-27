@@ -62,7 +62,7 @@ Screen(w, 'Flip');
 xc = x_pix / 2;
 yc = y_pix / 2;
 sess.xc = xc;
-sess.xy = yc; 
+sess.yc = yc; 
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 ifi = Screen('GetFlipInterval', w); % timing control
 % Retrieve the maximum priority number
@@ -121,15 +121,16 @@ end
 
 %% set up Eyetracker
 if sess.eye_on
-    inputs.testid = sub_str;
+    inputs.testid = subref;
     inputs.runid = num2str(sess.run);
     inputs.bground = sess.config.black;
     EyelinkDoTrackerSetup(el); % calibrate
     [sess, el, edf] = eyelink_initfile(el, sess, inputs); 
     % set up log file
-    lg_fn = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_eyetracklog.tsv'], ...
-                      sess.sub_num, sess.session, sess.acq, sess.run);
+    lg_fn = sprintf(['sub-', subref, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_eyetracklog.tsv'], ...
+                     sess.session, sess.acq, sess.run);
     lg_fid = fopen(fullfile( sub_dir, lg_fn ), 'w' );
     fprintf(lg_fid, '%s\t%s\t%s\t%s\t%s\t%s\%d\n', 'x','y','xc','yc','r','rf', 't'); % eylink x, eyelink y, screen center x, screen center y, radius from center, radius flag (point outside radius>), trial
+    sess.lg_fid = lg_fid;
 end
 

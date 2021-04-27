@@ -58,6 +58,9 @@ function [ts] = do_visual_events(wh, n, ts, sess, cue, target, ccw, hrz, col_map
     [ts.cue(n)] = Screen('Flip', wh);
 %    do_trigger(trid, labjack, triggers.cue, ts.cue);
     if sess.eye_on % get eye gaze position
+        eye_used = sess.eye_used;
+        el = sess.el;
+        lg_fid = sess.lg_fid;
         [x, y] = check_eyegaze_location(eye_used, el); % GET EYEUSED VARIABLE
         check_dist(x, y, xc, yc, r, n, lg_fid);
     end 

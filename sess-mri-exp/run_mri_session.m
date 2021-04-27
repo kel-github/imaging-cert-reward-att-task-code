@@ -66,24 +66,7 @@ r_num = str2double(r_num);
 rng(r_num);
 rngstate = rng;
 
-run_setup;
-
-%% Generate json metadata for this task and session
-addpath('JSONio');
-if sess.sub_num < 10
-    subref = '-00%d';
-elseif sess.sub_num > 9 && sess.sub_num < 100
-    subref = '-0%d';
-else
-    subref = '-%d';
-end
-sub_dir = [proj_loc '/' sprintf(['sub' subref '/ses-0%d'], sess.sub_num, sess.session) '/beh'];
-if ~(exist(sub_dir))
-    mkdir(sub_dir);
-end
-
-
-%% Generate json metadata for this task and session
+%% set sub and task identifiers
 task_str = 'learnAtt';
 if sess.sub_num < 10
     sub_str = '00%d';
@@ -92,7 +75,17 @@ elseif sess.sub_num > 9 && sess.sub_num < 100
 else
     sub_str = '%d';
 end
+subref = sub_str;
 
+addpath('JSONio');
+sub_dir = [proj_loc '/' sprintf(['sub-' subref '/ses-0%d'], sess.sub_num, sess.session) '/beh'];
+if ~(exist(sub_dir))
+    mkdir(sub_dir);
+end
+%% setup
+run_setup;
+
+%% Generate json metadata for this task and session
 json_log_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_bold_run-0%d.json'], sess.sub_num, sess.session, sess.acq, sess.run);
 meta_data.sub          = sess.sub_num;
 meta_data.session      = sess.session;
@@ -258,7 +251,7 @@ ts.pulses = zeros(4, size(ts.fix_off, 2)); % collect the onset time of every pul
 
 Priority(topPriorityLevel);  
 % time cheats
-run_pre_trials; % to pre-load all variables
+%run_pre_trials; % to pre-load all variables
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % show instructions for dummy scans
@@ -282,7 +275,9 @@ if sess.eye_on
     eye_used = Eyelink('EyeAvailable'); % Tracked eye - re-establish this after each calibration/recalibration
     if eye_used == el.BINOCULAR % if both eyes are tracked
         eye_used = el.LEFT_EYE; % use left eye
-    end    
+    end
+    sess.el = el;
+    sess.eye_used = eye_used;
 end
 
 % start dummy scans
