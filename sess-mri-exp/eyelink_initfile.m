@@ -17,4 +17,5 @@ Eyelink('Openfile', edf_file); % Create and open your Eyelink File
 % Eyelink('command', 'file_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON'); %Event data to collect
 % Eyelink('command', 'file_sample_data  = LEFT,RIGHT,GAZE,HREF,AREA,GAZERES,STATUS'); %Sample data to collect
 el.backgroundcolour = bgrnd;
+EyelinkUpdateDefaults(el);
 end
