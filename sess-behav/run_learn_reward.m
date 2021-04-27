@@ -48,7 +48,7 @@ if debug
     sess.sub_num = 10;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 0;
+    sess.skip_init_train = 1;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = 1;
@@ -248,7 +248,7 @@ events_json = generate_filename(['_ses-0%d_task-' task_str '_events'], sess, '.j
 generate_event_data_jsons(sub_dir, events_json);
 
 sess.set_types = [1 1 1 1 1 1];
-trials = generate_blocks_FourRewardCont(3); % for 1080 trials
+trials = generate_blocks_FourRewardCont(2); % for 720 trials
 % save the trial table to a file so that we can get other parameters later
 % (such as block number, hrz)
 tbl_fname       = generate_filename(['_ses-0%d_task-' task_str '_trls'], sess, '.csv');

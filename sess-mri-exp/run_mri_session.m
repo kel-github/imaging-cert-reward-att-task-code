@@ -48,7 +48,7 @@ else
     sess.session = input('Session? ');
     sess.run = input('Run? ');
     sess.eye_on  = input('Eye tracker? (0 or 1)? ');
-    sess.TR      = 1.51; % or does it?!
+    sess.TR      = 1.51; 
     %sess.contrast = input('Contrasts? ');
     reward_total = input('Total Rewards? ');
 end
@@ -61,7 +61,7 @@ parent = cd;
 
 %% Randomisation seed now based on subject and stage number
 stage = '5';
-r_num = ['1' num2str(sess.sub_num) '000' num2str(sess.session) stage];
+r_num = ['1' num2str(sess.sub_num) '000' num2str(sess.session) stage num2str(sess.run)];
 r_num = str2double(r_num);
 rng(r_num);
 rngstate = rng;
@@ -137,7 +137,6 @@ end
 % local probabilities are close to what would be expected globally. But
 % once all the trials are done, then each cue would have been seen the same
 % number of times, in each colour
-% OPEN A FILE TO RECORD THE LOG HERE
 %% Generate basis for trial structure and set up log files for writing to
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 trls_fname = sprintf(['sub-', sub_str, '_ses-0%d_task-', task_str, '_acq-TR%d_run-0%d_trls.tsv'], ...
@@ -176,7 +175,7 @@ trls_data.trial_num = 'trial number (t)';
 trls_data.block_num = '2 blocks x 360 t';
 trls_data.reward_type = 'reward cueing condition: 1=h/h, 2=h/l, 3=l/l, 4=l/h';
 trls_data.reward_trial = 'high or low reward on this trial: 1 = high reward, 2 = low reward';
-trls_data.probability = 'p target left | cue: 1=.8, 2=.2,3=.5';
+trls_data.probability = 'p target left | cue: 1=.8, 2=.2, 3=.5';
 trls_data.position = 'target location: 0 = left, 1 = right';
 trls_data.ccw = 'target orientation: 0 = cw, 1 = ccw';
 trls_data.hrz = 'distracter orientation" 0 = hrz, 1 = vertical';

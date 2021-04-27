@@ -179,6 +179,8 @@ q = [QuestCreate(contrast(1), guessSD, pThresh, bet, delt, gamm, grn, rng), ...
     [targets, ccw, hrz] =  generate_trial_block_params(ni1, n_positions);
     contrasts = reshape(repmat(linspace(0.25, 0.65, ni1)', [1, n_positions]), 1, []);
     
+% start with a message
+take_break(w, white, task); 
 
  % set break params   
 n_trials_between_breaks = 68;

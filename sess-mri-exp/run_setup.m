@@ -5,7 +5,7 @@ resolution = [1600 1200]; %
 
 %% Parameters
 load('counterBalance_task_learn_att')
-colours = [148 131 165;  226 90 121]';
+colours = [82, 95, 186;  0, 130, 0]'; %see York & Becker, 2020: doi.org/10.1167/jov.20.4.6
 sess.cbalance = p_counterbalance(:, sess.sub_num);
 
 % assign reward colours ([1, 2] or [2, 1]) - colour value mapping (1 = high
@@ -122,6 +122,7 @@ end
 %% set up Eyetracker
 if sess.eye_on
     inputs.testid = sub_str;
+    inputs.runid = num2str(sess.run);
     inputs.bground = sess.config.black;
     EyelinkDoTrackerSetup(el); % calibrate
     [sess, el, edf] = eyelink_initfile(el, sess, inputs); 

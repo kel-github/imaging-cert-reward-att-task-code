@@ -1,12 +1,13 @@
 function [sess, el, edf_file] = eyelink_initfile(el, sess, input)
 
 testid = input.testid;
+runid = input.runid;
 bgrnd = input.bground;
 
 [sess.eyelink_version, sess.eyelink_vstring] = ...
     Eyelink('GetTrackerVersion');
 
-edf_file = sprintf('EPT_%s.edf', testid);
+edf_file = sprintf('%s_%s.edf', testid, runid);
 
 Eyelink('Openfile', edf_file); % Create and open your Eyelink File
 % Set calibration type.

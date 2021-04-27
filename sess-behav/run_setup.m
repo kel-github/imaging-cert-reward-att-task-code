@@ -6,7 +6,7 @@ resolution = [1024 768]; % might change this with psychtoolbox - get stuff
 %% Parameters
 load('counterBalance_task_learn_att')
 %colours = [182, 133, 58; 230 93 85]';
-colours = [148 131 165;  226 90 121]'; %230 93 85]'; %[182, 133, 58]-5; 226 90 121]; 
+colours = [82, 95, 186;  0, 130, 0]'; %see York & Becker, 2020: doi.org/10.1167/jov.20.4.6
 sess.cbalance = p_counterbalance(:, sess.sub_num);
 
 % assign reward colours ([1, 2] or [2, 1]) - colour value mapping (1 = high
@@ -44,7 +44,7 @@ angle = 45;
 
 %% SCREEN / DRAWING
 screen_index = max(Screen('Screens'));
-%PsychDebugWindowConfiguration;
+PsychDebugWindowConfiguration;
 white = WhiteIndex(screen_index);
 black = BlackIndex(screen_index);
 grey = white * 0.5;
