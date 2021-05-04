@@ -48,7 +48,7 @@ if debug
     sess.sub_num = 10;
     sess.session = 1;
     sess.eye_on  = 0;
-    sess.skip_init_train = 1;
+    sess.skip_init_train = 0;
 else
     sess.sub_num = input('Subject Number? ');
     sess.session = 1;
@@ -207,7 +207,6 @@ if ~any(sess.skip_init_train)
             % put the colour on the target location
             col_map = [cCols(:, targets(count_trials)), cCols(:, max(targets)+1-targets(count_trials))];
 
-            trial_count = trial_count + 1;
             Priority(topPriorityLevel);
             [valid, response, ts] = ...
                 do_trial(w, sess, task, -1, targets(count_trials), ccw(count_trials), hrz(count_trials), col_map, ...

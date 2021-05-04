@@ -18,7 +18,7 @@ trls_data.date = datetime;
 trls_data.trial_num = 'trial number (t)';
 trls_data.block_num = '2 blocks x 360 t';
 trls_data.reward_type = 'reward cueing condition: 1=h/h, 2=h/l, 3=l/l, 4=l/h';
-trls_data.reward_trial = 'high or low reward on this trial: 1 = high reward, 2 = low reward';
+trls_data.reward_trial = 'high or low reward on this trial: 1 = high reward, 0 = low reward, 9 = NA';
 trls_data.probability = 'p target left | cue: 1=.8, 2=.2,3=.5';
 trls_data.position = 'target location: 0 = left, 1 = right';
 trls_data.ccw = 'target orientation: 0 = cw, 1 = ccw';
