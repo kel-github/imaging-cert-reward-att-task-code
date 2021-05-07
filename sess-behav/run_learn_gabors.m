@@ -180,7 +180,7 @@ if ~any(sess.skip_init_train)
         % can we terminate the loop yet?
         resp_tally = [response.correct, resp_tally];
         if trial_count >= min_trials
-            prct = sum(resp_tally(1:min_trials))/trial_count;
+            prct = sum(resp_tally(1:min_trials))/min_trials;
             if prct > .8
                 
                 done = 1; % break loop
