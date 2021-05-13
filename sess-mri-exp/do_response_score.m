@@ -58,6 +58,6 @@ else
 end
 
 
-fprintf(event_fid, event_form, ts.response(n), response.rt, response.correct); % event info stuff
+fprintf(event_fid, event_form, ts.response(n), response.rt, 'response'); % event info stuff
 
 end
